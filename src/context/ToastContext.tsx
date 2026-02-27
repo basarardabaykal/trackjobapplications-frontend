@@ -1,8 +1,8 @@
-import { createContext, useCallback, useContext, useState, ReactNode } from 'react'
+import { createContext, useCallback, useContext, useState, ReactNode, useRef } from 'react'
 
 type ToastType = 'success' | 'error' | 'info'
 
-interface ToastItem {
+interface Toast {
   id: number
   message: string
   type: ToastType
@@ -32,7 +32,7 @@ const ICONS: Record<ToastType, JSX.Element> = {
   ),
 }
 
-function ToastItem({ item, onDismiss }: { item: ToastItem; onDismiss: (id: number) => void }) {
+function ToastCard({ item, onDismiss }: { item: Toast; onDismiss: (id: number) => void }) {
   return (
     <div className="flex items-center gap-3 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-lg min-w-64 max-w-sm animate-slide-up">
       {ICONS[item.type]}
@@ -49,26 +49,27 @@ function ToastItem({ item, onDismiss }: { item: ToastItem; onDismiss: (id: numbe
   )
 }
 
-function ToastContainer({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (id: number) => void }) {
+function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: number) => void }) {
   if (toasts.length === 0) return null
   return (
     <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 items-end">
       {toasts.map(t => (
-        <ToastItem key={t.id} item={t} onDismiss={onDismiss} />
+        <ToastCard key={t.id} item={t} onDismiss={onDismiss} />
       ))}
     </div>
   )
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<ToastItem[]>([])
+  const [toasts, setToasts] = useState<Toast[]>([])
+  const counter = useRef(0)
 
   const dismiss = useCallback((id: number) => {
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
   const addToast = useCallback((message: string, type: ToastType = 'success') => {
-    const id = Date.now()
+    const id = ++counter.current
     setToasts(prev => [...prev, { id, message, type }])
     setTimeout(() => dismiss(id), 3000)
   }, [dismiss])
