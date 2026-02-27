@@ -127,6 +127,8 @@ export default function KanbanBoard({ applications, onEdit, onDelete, onStatusCh
         onStatusChange(draggedId.current, status)
       }
     }
+    draggedId.current = null
+    setDraggingId(null)
     setDragOverCol(null)
   }
 
