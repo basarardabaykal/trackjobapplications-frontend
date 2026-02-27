@@ -11,6 +11,7 @@ import ApplicationDrawer from '../components/dashboard/ApplicationDrawer'
 import { PlusIcon, TableIcon, KanbanIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
 import { ApplicationStatus, JobApplication } from '../types'
+import { useToast } from '../context/ToastContext'
 
 type ViewMode = 'table' | 'kanban'
 
@@ -20,6 +21,7 @@ type StatusFilter = ApplicationStatus | 'all'
 const STATUS_ORDER: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
 
 export default function DashboardPage() {
+  const { addToast } = useToast()
   const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
 
   // View mode
@@ -75,6 +77,7 @@ export default function DashboardPage() {
   function handleAdd(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
     const now = new Date().toISOString()
     setApps(prev => [{ ...data, id: Date.now(), created_at: now, updated_at: now }, ...prev])
+    addToast('Application added')
   }
 
   function handleEdit(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
@@ -84,18 +87,21 @@ export default function DashboardPage() {
         a.id === editTarget.id ? { ...a, ...data, updated_at: new Date().toISOString() } : a,
       ),
     )
+    addToast('Changes saved')
   }
 
   function handleStatusChange(id: number, newStatus: ApplicationStatus) {
     setApps(prev =>
       prev.map(a => (a.id === id ? { ...a, status: newStatus, updated_at: new Date().toISOString() } : a)),
     )
+    addToast('Status updated')
   }
 
   function handleDelete() {
     if (!deleteTarget) return
     setApps(prev => prev.filter(a => a.id !== deleteTarget.id))
     setDeleteTarget(null)
+    addToast('Application deleted', 'error')
   }
 
   return (
