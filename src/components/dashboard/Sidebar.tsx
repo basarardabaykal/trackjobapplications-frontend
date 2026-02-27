@@ -1,11 +1,16 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { HomeIcon, SignOutIcon } from '../icons'
+import { HomeIcon, BarChartIcon, SignOutIcon } from '../icons'
 
 const NAV_ITEMS = [
   {
     label: 'Dashboard',
     to: '/dashboard',
     icon: <HomeIcon />,
+  },
+  {
+    label: 'Analytics',
+    to: '/analytics',
+    icon: <BarChartIcon />,
   },
 ]
 
