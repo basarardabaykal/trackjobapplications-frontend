@@ -1,43 +1,11 @@
 import { useMemo } from 'react'
 import Sidebar from '../components/dashboard/Sidebar'
 import Header from '../components/dashboard/Header'
+import StatCard from '../components/dashboard/StatCard'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
 import { ApplicationStatus } from '../types'
-import { STATUS_CONFIG } from '../constants/applicationStatus'
-
-const STATUS_COLORS: Record<ApplicationStatus, string> = {
-  applied: 'bg-blue-500',
-  interview: 'bg-amber-400',
-  offer: 'bg-emerald-500',
-  rejected: 'bg-red-400',
-  withdrawn: 'bg-gray-300',
-}
-
-const STATUS_TEXT: Record<ApplicationStatus, string> = {
-  applied: 'text-blue-600',
-  interview: 'text-amber-600',
-  offer: 'text-emerald-600',
-  rejected: 'text-red-500',
-  withdrawn: 'text-gray-500',
-}
-
-const STATUS_BG: Record<ApplicationStatus, string> = {
-  applied: 'bg-blue-50',
-  interview: 'bg-amber-50',
-  offer: 'bg-emerald-50',
-  rejected: 'bg-red-50',
-  withdrawn: 'bg-gray-50',
-}
-
-function StatCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
-  return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5">
-      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-      <p className={`text-3xl font-bold ${color}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
-    </div>
-  )
-}
+import { STATUS_CONFIG, STATUS_COLORS, STATUS_TEXT, STATUS_BG } from '../constants/applicationStatus'
+import { formatMonthYear } from '../lib/dates'
 
 export default function AnalyticsPage() {
   const apps = MOCK_APPLICATIONS
@@ -67,11 +35,6 @@ export default function AnalyticsPage() {
 
   const maxMonthCount = Math.max(...byMonth.map(([, c]) => c), 1)
 
-  function formatMonth(key: string) {
-    const [year, month] = key.split('-')
-    return new Date(Number(year), Number(month) - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-  }
-
   const statuses: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
 
   return (
@@ -85,9 +48,9 @@ export default function AnalyticsPage() {
           {/* Summary cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <StatCard label="Total Applications" value={total} color="text-gray-900" />
-            <StatCard label="Interview Rate" value={`${interviewRate}%`} sub="reached interview stage" color="text-amber-600" />
-            <StatCard label="Offer Rate" value={`${offerRate}%`} sub="converted to offer" color="text-emerald-600" />
-            <StatCard label="Active" value={counts.applied + counts.interview} sub="applied + interview" color="text-blue-600" />
+            <StatCard label="Interview Rate" value={`${interviewRate}%`} color="text-amber-600" />
+            <StatCard label="Offer Rate" value={`${offerRate}%`} color="text-emerald-600" />
+            <StatCard label="Active" value={counts.applied + counts.interview} color="text-blue-600" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -116,7 +79,7 @@ export default function AnalyticsPage() {
                 })}
               </div>
 
-              {/* Donut-style legend */}
+              {/* Legend */}
               <div className="mt-6 pt-5 border-t border-gray-100 flex flex-wrap gap-3">
                 {statuses.map(status => (
                   <div key={status} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${STATUS_BG[status]}`}>
@@ -147,7 +110,7 @@ export default function AnalyticsPage() {
                             style={{ height: `${heightPct}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-400 text-center leading-tight">{formatMonth(key)}</span>
+                        <span className="text-xs text-gray-400 text-center leading-tight">{formatMonthYear(key)}</span>
                       </div>
                     )
                   })}

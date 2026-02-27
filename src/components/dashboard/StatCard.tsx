@@ -1,6 +1,6 @@
 interface Props {
   label: string
-  value: number
+  value: string | number
   color: string
 }
 
