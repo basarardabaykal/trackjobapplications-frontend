@@ -7,6 +7,7 @@ interface FormData {
   position: string
   status: ApplicationStatus
   applied_date: string
+  url: string
   notes: string
 }
 
@@ -22,6 +23,7 @@ const INITIAL_FORM: FormData = {
   position: '',
   status: 'applied',
   applied_date: new Date().toISOString().split('T')[0],
+  url: '',
   notes: '',
 }
 
@@ -31,6 +33,7 @@ function toFormData(app: JobApplication): FormData {
     position: app.position,
     status: app.status,
     applied_date: app.applied_date,
+    url: app.url ?? '',
     notes: app.notes,
   }
 }
@@ -74,6 +77,7 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
       position: form.position.trim(),
       status: form.status,
       applied_date: form.applied_date,
+      url: form.url.trim() || undefined,
       notes: form.notes.trim(),
     })
     onClose()
@@ -169,6 +173,17 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
                 />
                 {errors.applied_date && <p className="mt-1 text-xs text-red-500">{errors.applied_date}</p>}
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Job URL</label>
+              <input
+                type="url"
+                placeholder="https://company.com/jobs/..."
+                value={form.url}
+                onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors placeholder:text-gray-300"
+              />
             </div>
 
             <div>
