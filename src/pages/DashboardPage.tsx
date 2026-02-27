@@ -1,16 +1,58 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Sidebar from '../components/dashboard/Sidebar'
 import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
 import ApplicationsTable from '../components/dashboard/ApplicationsTable'
 import AddApplicationModal from '../components/dashboard/AddApplicationModal'
+import ConfirmModal from '../components/dashboard/ConfirmModal'
+import TableFilters from '../components/dashboard/TableFilters'
 import { PlusIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
-import { JobApplication } from '../types'
+import { ApplicationStatus, JobApplication } from '../types'
+
+type SortKey = 'date' | 'company' | 'status'
+type StatusFilter = ApplicationStatus | 'all'
+
+const STATUS_ORDER: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
 
 export default function DashboardPage() {
   const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
-  const [modalOpen, setModalOpen] = useState(false)
+
+  // Modal state
+  const [addOpen, setAddOpen] = useState(false)
+  const [editTarget, setEditTarget] = useState<JobApplication | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<JobApplication | null>(null)
+
+  // Filter / sort state
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [sortKey, setSortKey] = useState<SortKey>('date')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+
+  function handleSortChange(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir(d => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortKey(key)
+      setSortDir('asc')
+    }
+  }
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    return apps
+      .filter(a => statusFilter === 'all' || a.status === statusFilter)
+      .filter(a =>
+        a.company.toLowerCase().includes(q) || a.position.toLowerCase().includes(q),
+      )
+      .sort((a, b) => {
+        let cmp = 0
+        if (sortKey === 'date') cmp = a.applied_date.localeCompare(b.applied_date)
+        if (sortKey === 'company') cmp = a.company.localeCompare(b.company)
+        if (sortKey === 'status') cmp = STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status)
+        return sortDir === 'asc' ? cmp : -cmp
+      })
+  }, [apps, search, statusFilter, sortKey, sortDir])
 
   const stats = {
     total: apps.length,
@@ -22,13 +64,22 @@ export default function DashboardPage() {
 
   function handleAdd(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
     const now = new Date().toISOString()
-    const newApp: JobApplication = {
-      ...data,
-      id: Date.now(),
-      created_at: now,
-      updated_at: now,
-    }
-    setApps(prev => [newApp, ...prev])
+    setApps(prev => [{ ...data, id: Date.now(), created_at: now, updated_at: now }, ...prev])
+  }
+
+  function handleEdit(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
+    if (!editTarget) return
+    setApps(prev =>
+      prev.map(a =>
+        a.id === editTarget.id ? { ...a, ...data, updated_at: new Date().toISOString() } : a,
+      ),
+    )
+  }
+
+  function handleDelete() {
+    if (!deleteTarget) return
+    setApps(prev => prev.filter(a => a.id !== deleteTarget.id))
+    setDeleteTarget(null)
   }
 
   return (
@@ -41,7 +92,7 @@ export default function DashboardPage() {
             title="Applications"
             action={
               <button
-                onClick={() => setModalOpen(true)}
+                onClick={() => setAddOpen(true)}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
               >
                 <PlusIcon />
@@ -58,14 +109,48 @@ export default function DashboardPage() {
             <StatCard label="Rejected" value={stats.rejected} color="text-red-500" />
           </div>
 
-          <ApplicationsTable applications={apps} />
+          <TableFilters
+            search={search}
+            onSearchChange={setSearch}
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSortChange={handleSortChange}
+          />
+
+          <ApplicationsTable
+            applications={filtered}
+            onEdit={app => setEditTarget(app)}
+            onDelete={app => setDeleteTarget(app)}
+          />
         </div>
       </div>
 
       <AddApplicationModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
         onSubmit={handleAdd}
+      />
+
+      <AddApplicationModal
+        open={!!editTarget}
+        onClose={() => setEditTarget(null)}
+        onSubmit={handleEdit}
+        initialData={editTarget ?? undefined}
+      />
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="Delete application"
+        description={
+          deleteTarget
+            ? `Remove ${deleteTarget.company} — ${deleteTarget.position}? This cannot be undone.`
+            : ''
+        }
+        confirmLabel="Delete"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
       />
     </div>
   )
