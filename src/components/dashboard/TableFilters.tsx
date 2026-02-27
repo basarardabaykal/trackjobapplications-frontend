@@ -1,6 +1,6 @@
-import { ApplicationStatus, SortKey, StatusFilter } from '../../types'
-import { STATUS_CONFIG } from '../../constants/applicationStatus'
-
+import { useTranslation } from 'react-i18next'
+import { SortKey, StatusFilter } from '../../types'
+import { SearchIcon, CloseIcon, ChevronUpIcon } from '../icons'
 
 interface Props {
   search: string
@@ -12,21 +12,6 @@ interface Props {
   onSortChange: (key: SortKey) => void
 }
 
-const STATUS_CHIPS: { value: StatusFilter; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'applied', label: STATUS_CONFIG.applied.label },
-  { value: 'interview', label: STATUS_CONFIG.interview.label },
-  { value: 'offer', label: STATUS_CONFIG.offer.label },
-  { value: 'rejected', label: STATUS_CONFIG.rejected.label },
-  { value: 'withdrawn', label: STATUS_CONFIG.withdrawn.label },
-]
-
-const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: 'date', label: 'Date' },
-  { value: 'company', label: 'Company' },
-  { value: 'status', label: 'Status' },
-]
-
 export default function TableFilters({
   search,
   onSearchChange,
@@ -36,23 +21,35 @@ export default function TableFilters({
   sortDir,
   onSortChange,
 }: Props) {
+  const { t } = useTranslation()
+
+  const STATUS_CHIPS: { value: StatusFilter; label: string }[] = [
+    { value: 'all', label: t('dashboard.status.all') },
+    { value: 'applied', label: t('dashboard.status.applied') },
+    { value: 'interview', label: t('dashboard.status.interview') },
+    { value: 'offer', label: t('dashboard.status.offer') },
+    { value: 'rejected', label: t('dashboard.status.rejected') },
+    { value: 'withdrawn', label: t('dashboard.status.withdrawn') },
+  ]
+
+  const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+    { value: 'date', label: t('dashboard.filters.sortDate') },
+    { value: 'company', label: t('dashboard.filters.sortCompany') },
+    { value: 'status', label: t('dashboard.filters.sortStatus') },
+  ]
+
   return (
     <div className="flex flex-col gap-3 mb-4">
       {/* Search + Sort row */}
       <div className="flex items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-xs">
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <SearchIcon />
+          </span>
           <input
             type="text"
-            placeholder="Search company or position..."
+            placeholder={t('dashboard.filters.searchPlaceholder')}
             value={search}
             onChange={e => onSearchChange(e.target.value)}
             className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors placeholder:text-gray-300 bg-white"
@@ -61,17 +58,16 @@ export default function TableFilters({
             <button
               onClick={() => onSearchChange('')}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              aria-label="Clear search"
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <CloseIcon />
             </button>
           )}
         </div>
 
         {/* Sort */}
         <div className="flex items-center gap-1.5 ml-auto">
-          <span className="text-xs text-gray-400 font-medium">Sort:</span>
+          <span className="text-xs text-gray-400 font-medium">{t('dashboard.filters.sort')}</span>
           {SORT_OPTIONS.map(opt => (
             <button
               key={opt.value}
@@ -84,14 +80,7 @@ export default function TableFilters({
             >
               {opt.label}
               {sortKey === opt.value && (
-                <svg
-                  className={`w-3 h-3 transition-transform ${sortDir === 'desc' ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
-                </svg>
+                <ChevronUpIcon flipped={sortDir === 'desc'} />
               )}
             </button>
           ))}
