@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import Sidebar from '../components/dashboard/Sidebar'
+import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import DashboardLayout from '../components/layout/DashboardLayout'
 import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
 import ApplicationsTable from '../components/dashboard/ApplicationsTable'
@@ -8,25 +9,20 @@ import AddApplicationModal from '../components/dashboard/AddApplicationModal'
 import ConfirmModal from '../components/dashboard/ConfirmModal'
 import TableFilters from '../components/dashboard/TableFilters'
 import ApplicationDrawer from '../components/dashboard/ApplicationDrawer'
+import Button from '../components/ui/Button'
 import { PlusIcon, TableIcon, KanbanIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
 import { ApplicationStatus, JobApplication, ViewMode } from '../types'
 import { useToast } from '../context/ToastContext'
 import { useApplicationFilters } from '../hooks/useApplicationFilters'
 
-
-
 export default function DashboardPage() {
+  const { t } = useTranslation()
   const { addToast } = useToast()
   const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
 
-  // View mode
   const [view, setView] = useState<ViewMode>('table')
-
-  // Drawer state
   const [drawerApp, setDrawerApp] = useState<JobApplication | null>(null)
-
-  // Modal state
   const [addOpen, setAddOpen] = useState(false)
   const [editTarget, setEditTarget] = useState<JobApplication | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<JobApplication | null>(null)
@@ -34,13 +30,13 @@ export default function DashboardPage() {
   const { search, setSearch, statusFilter, setStatusFilter, sortKey, sortDir, handleSortChange, filtered } =
     useApplicationFilters(apps)
 
-  const stats = {
+  const stats = useMemo(() => ({
     total: apps.length,
     applied: apps.filter(a => a.status === 'applied').length,
     interview: apps.filter(a => a.status === 'interview').length,
     offer: apps.filter(a => a.status === 'offer').length,
     rejected: apps.filter(a => a.status === 'rejected').length,
-  }
+  }), [apps])
 
   function handleAdd(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
     const now = new Date().toISOString()
@@ -73,80 +69,70 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+    <DashboardLayout>
+      <Header
+        title={t('dashboard.title')}
+        action={
+          <div className="flex items-center gap-2">
+            <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5">
+              <button
+                onClick={() => setView('table')}
+                className={`p-1.5 rounded-lg transition-colors ${view === 'table' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                title="Table view"
+              >
+                <TableIcon />
+              </button>
+              <button
+                onClick={() => setView('kanban')}
+                className={`p-1.5 rounded-lg transition-colors ${view === 'kanban' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                title="Kanban view"
+              >
+                <KanbanIcon />
+              </button>
+            </div>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <div className="px-8 pt-8 pb-6">
-          <Header
-            title="Applications"
-            action={
-              <div className="flex items-center gap-2">
-                {/* View toggle */}
-                <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5">
-                  <button
-                    onClick={() => setView('table')}
-                    className={`p-1.5 rounded-lg transition-colors ${view === 'table' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                    title="Table view"
-                  >
-                    <TableIcon />
-                  </button>
-                  <button
-                    onClick={() => setView('kanban')}
-                    className={`p-1.5 rounded-lg transition-colors ${view === 'kanban' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                    title="Kanban view"
-                  >
-                    <KanbanIcon />
-                  </button>
-                </div>
-
-                <button
-                  onClick={() => setAddOpen(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
-                >
-                  <PlusIcon />
-                  Add Application
-                </button>
-              </div>
-            }
-          />
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-            <StatCard label="Total" value={stats.total} color="text-gray-900" />
-            <StatCard label="Applied" value={stats.applied} color="text-blue-600" />
-            <StatCard label="Interview" value={stats.interview} color="text-amber-600" />
-            <StatCard label="Offer" value={stats.offer} color="text-emerald-600" />
-            <StatCard label="Rejected" value={stats.rejected} color="text-red-500" />
+            <Button onClick={() => setAddOpen(true)}>
+              <PlusIcon />
+              {t('dashboard.addApplication')}
+            </Button>
           </div>
+        }
+      />
 
-          <TableFilters
-            search={search}
-            onSearchChange={setSearch}
-            statusFilter={statusFilter}
-            onStatusFilterChange={setStatusFilter}
-            sortKey={sortKey}
-            sortDir={sortDir}
-            onSortChange={handleSortChange}
-          />
-
-          {view === 'table' ? (
-            <ApplicationsTable
-              applications={filtered}
-              onView={app => setDrawerApp(app)}
-              onEdit={app => setEditTarget(app)}
-              onDelete={app => setDeleteTarget(app)}
-            />
-          ) : (
-            <KanbanBoard
-              applications={filtered}
-              onView={app => setDrawerApp(app)}
-              onEdit={app => setEditTarget(app)}
-              onDelete={app => setDeleteTarget(app)}
-              onStatusChange={handleStatusChange}
-            />
-          )}
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+        <StatCard label={t('dashboard.stats.total')} value={stats.total} color="text-gray-900" />
+        <StatCard label={t('dashboard.stats.applied')} value={stats.applied} color="text-blue-600" />
+        <StatCard label={t('dashboard.stats.interview')} value={stats.interview} color="text-amber-600" />
+        <StatCard label={t('dashboard.stats.offer')} value={stats.offer} color="text-emerald-600" />
+        <StatCard label={t('dashboard.stats.rejected')} value={stats.rejected} color="text-red-500" />
       </div>
+
+      <TableFilters
+        search={search}
+        onSearchChange={setSearch}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        sortKey={sortKey}
+        sortDir={sortDir}
+        onSortChange={handleSortChange}
+      />
+
+      {view === 'table' ? (
+        <ApplicationsTable
+          applications={filtered}
+          onView={app => setDrawerApp(app)}
+          onEdit={app => setEditTarget(app)}
+          onDelete={app => setDeleteTarget(app)}
+        />
+      ) : (
+        <KanbanBoard
+          applications={filtered}
+          onView={app => setDrawerApp(app)}
+          onEdit={app => setEditTarget(app)}
+          onDelete={app => setDeleteTarget(app)}
+          onStatusChange={handleStatusChange}
+        />
+      )}
 
       <AddApplicationModal
         open={addOpen}
@@ -163,13 +149,16 @@ export default function DashboardPage() {
 
       <ConfirmModal
         open={!!deleteTarget}
-        title="Delete application"
+        title={t('dashboard.confirm.deleteTitle')}
         description={
           deleteTarget
-            ? `Remove ${deleteTarget.company} — ${deleteTarget.position}? This cannot be undone.`
+            ? t('dashboard.confirm.deleteDescription', {
+                company: deleteTarget.company,
+                position: deleteTarget.position,
+              })
             : ''
         }
-        confirmLabel="Delete"
+        confirmLabel={t('dashboard.confirm.delete')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
@@ -180,6 +169,6 @@ export default function DashboardPage() {
         onEdit={app => { setDrawerApp(null); setEditTarget(app) }}
         onDelete={app => { setDrawerApp(null); setDeleteTarget(app) }}
       />
-    </div>
+    </DashboardLayout>
   )
 }
