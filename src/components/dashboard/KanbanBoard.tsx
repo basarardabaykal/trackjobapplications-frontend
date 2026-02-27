@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import { JobApplication, ApplicationStatus } from '../../types'
 import { STATUS_CONFIG } from '../../constants/applicationStatus'
 import { EditIcon, TrashIcon } from '../icons'
@@ -6,6 +7,7 @@ interface Props {
   applications: JobApplication[]
   onEdit: (app: JobApplication) => void
   onDelete: (app: JobApplication) => void
+  onStatusChange: (id: number, newStatus: ApplicationStatus) => void
 }
 
 const COLUMNS: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
@@ -44,11 +46,23 @@ interface CardProps {
   app: JobApplication
   onEdit: (app: JobApplication) => void
   onDelete: (app: JobApplication) => void
+  onDragStart: (id: number) => void
+  onDragEnd: () => void
+  isDragging: boolean
 }
 
-function KanbanCard({ app, onEdit, onDelete }: CardProps) {
+function KanbanCard({ app, onEdit, onDelete, onDragStart, onDragEnd, isDragging }: CardProps) {
   return (
-    <div className="group bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:shadow-md hover:border-blue-100 transition-all duration-200">
+    <div
+      draggable
+      onDragStart={() => onDragStart(app.id)}
+      onDragEnd={onDragEnd}
+      className={`group bg-white rounded-xl border shadow-sm p-4 transition-all duration-200 cursor-grab active:cursor-grabbing ${
+        isDragging
+          ? 'opacity-40 scale-95 border-blue-200'
+          : 'border-gray-100 hover:shadow-md hover:border-blue-100'
+      }`}
+    >
       <div className="flex items-start justify-between gap-2 mb-3">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 ${getAvatarColor(app.company)}`}>
@@ -85,15 +99,52 @@ function KanbanCard({ app, onEdit, onDelete }: CardProps) {
   )
 }
 
-export default function KanbanBoard({ applications, onEdit, onDelete }: Props) {
+export default function KanbanBoard({ applications, onEdit, onDelete, onStatusChange }: Props) {
+  const draggedId = useRef<number | null>(null)
+  const [draggingId, setDraggingId] = useState<number | null>(null)
+  const [dragOverCol, setDragOverCol] = useState<ApplicationStatus | null>(null)
+
+  function handleDragStart(id: number) {
+    draggedId.current = id
+    setDraggingId(id)
+  }
+
+  function handleDragEnd() {
+    draggedId.current = null
+    setDraggingId(null)
+    setDragOverCol(null)
+  }
+
+  function handleDragOver(e: React.DragEvent, status: ApplicationStatus) {
+    e.preventDefault()
+    setDragOverCol(status)
+  }
+
+  function handleDrop(status: ApplicationStatus) {
+    if (draggedId.current !== null) {
+      const app = applications.find(a => a.id === draggedId.current)
+      if (app && app.status !== status) {
+        onStatusChange(draggedId.current, status)
+      }
+    }
+    setDragOverCol(null)
+  }
+
   return (
     <div className="flex gap-4 overflow-x-auto pb-4">
       {COLUMNS.map(status => {
         const colApps = applications.filter(a => a.status === status)
         const config = STATUS_CONFIG[status]
+        const isOver = dragOverCol === status
 
         return (
-          <div key={status} className="flex-shrink-0 w-64">
+          <div
+            key={status}
+            className="flex-shrink-0 w-64"
+            onDragOver={e => handleDragOver(e, status)}
+            onDragLeave={() => setDragOverCol(null)}
+            onDrop={() => handleDrop(status)}
+          >
             {/* Column header */}
             <div className="flex items-center gap-2 mb-3">
               <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${COLUMN_ACCENT[status]}`} />
@@ -106,14 +157,26 @@ export default function KanbanBoard({ applications, onEdit, onDelete }: Props) {
             </div>
 
             {/* Cards */}
-            <div className="space-y-2.5">
-              {colApps.length === 0 ? (
+            <div
+              className={`space-y-2.5 min-h-24 rounded-xl transition-colors duration-150 ${
+                isOver ? 'bg-blue-50/60 ring-2 ring-blue-200 ring-dashed p-1' : ''
+              }`}
+            >
+              {colApps.length === 0 && !isOver ? (
                 <div className="rounded-xl border-2 border-dashed border-gray-100 py-8 text-center">
                   <p className="text-xs text-gray-300">No applications</p>
                 </div>
               ) : (
                 colApps.map(app => (
-                  <KanbanCard key={app.id} app={app} onEdit={onEdit} onDelete={onDelete} />
+                  <KanbanCard
+                    key={app.id}
+                    app={app}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    isDragging={draggingId === app.id}
+                  />
                 ))
               )}
             </div>
