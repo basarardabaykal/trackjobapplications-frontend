@@ -18,12 +18,8 @@ export default function WelcomePage() {
           </div>
           <span className="text-lg font-bold text-gray-800 tracking-tight">TrackJobs</span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg p-0.5">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg">
-              <LanguageSwitcher />
-            </div>
-          </div>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <button
             onClick={() => navigate('/login')}
             className="px-5 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
