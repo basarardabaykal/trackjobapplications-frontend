@@ -1,15 +1,18 @@
+import { useTranslation } from 'react-i18next'
+
 interface Props {
   isSignUp: boolean
   onSwitch: () => void
 }
 
 export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
+  const { t } = useTranslation()
+
   return (
     <div
       className="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-all duration-700 ease-in-out z-10"
       style={{ transform: isSignUp ? 'translateX(-100%)' : 'translateX(0)' }}
     >
-      {/* Inner sliding container — 200% wide, slides left/right */}
       <div
         className="relative flex w-[200%] h-full transition-transform duration-700 ease-in-out"
         style={{ transform: isSignUp ? 'translateX(0)' : 'translateX(-50%)' }}
@@ -21,13 +24,13 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
             <BriefcaseIcon />
             <h3 className="text-3xl font-bold mb-3 tracking-tight">TrackJobs</h3>
             <p className="text-blue-100 text-sm leading-relaxed mb-8 max-w-xs">
-              Already have an account? Sign in and continue where you left off.
+              {t('auth.overlay.signInPanel.description')}
             </p>
             <button
               onClick={onSwitch}
               className="px-8 py-2.5 rounded-full border-2 border-white text-white text-sm font-semibold tracking-wide hover:bg-white hover:text-blue-700 transition-all duration-200"
             >
-              SIGN IN
+              {t('auth.overlay.signInPanel.button')}
             </button>
           </div>
         </div>
@@ -39,13 +42,13 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
             <BriefcaseIcon />
             <h3 className="text-3xl font-bold mb-3 tracking-tight">TrackJobs</h3>
             <p className="text-blue-100 text-sm leading-relaxed mb-8 max-w-xs">
-              New here? Create an account and take control of your job search.
+              {t('auth.overlay.signUpPanel.description')}
             </p>
             <button
               onClick={onSwitch}
               className="px-8 py-2.5 rounded-full border-2 border-white text-white text-sm font-semibold tracking-wide hover:bg-white hover:text-blue-700 transition-all duration-200"
             >
-              SIGN UP
+              {t('auth.overlay.signUpPanel.button')}
             </button>
           </div>
         </div>

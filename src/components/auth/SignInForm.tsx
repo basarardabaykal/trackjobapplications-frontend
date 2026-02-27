@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   onSwitch: () => void
@@ -37,6 +38,7 @@ function EyeIcon({ open }: { open: boolean }) {
 }
 
 export default function SignInForm({ onSwitch }: Props) {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -48,18 +50,15 @@ export default function SignInForm({ onSwitch }: Props) {
 
   return (
     <div className="flex flex-col items-center justify-center h-full px-12">
-      <h2 className="text-3xl font-bold text-gray-800 mb-1">Sign In</h2>
-      <p className="text-sm text-gray-400 mb-8">Welcome back! Please enter your details.</p>
+      <h2 className="text-3xl font-bold text-gray-800 mb-1">{t('auth.signIn.title')}</h2>
+      <p className="text-sm text-gray-400 mb-8">{t('auth.signIn.subtitle')}</p>
 
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
-        {/* Email */}
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2">
-            <MailIcon />
-          </span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2"><MailIcon /></span>
           <input
             type="email"
-            placeholder="Email address"
+            placeholder={t('auth.signIn.email')}
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -67,14 +66,11 @@ export default function SignInForm({ onSwitch }: Props) {
           />
         </div>
 
-        {/* Password */}
         <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2">
-            <LockIcon />
-          </span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2"><LockIcon /></span>
           <input
             type={showPassword ? 'text' : 'password'}
-            placeholder="Password"
+            placeholder={t('auth.signIn.password')}
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -89,33 +85,29 @@ export default function SignInForm({ onSwitch }: Props) {
           </button>
         </div>
 
-        {/* Forgot password */}
         <div className="flex justify-end">
           <button type="button" className="text-xs text-blue-600 hover:text-blue-700 hover:underline transition-colors">
-            Forgot password?
+            {t('auth.signIn.forgotPassword')}
           </button>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           className="w-full py-3 rounded-xl text-sm font-semibold text-white tracking-wide bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all duration-200"
         >
-          SIGN IN
+          {t('auth.signIn.submit')}
         </button>
 
-        {/* Divider */}
         <div className="flex items-center gap-3 py-1">
           <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400">or</span>
+          <span className="text-xs text-gray-400">{t('auth.signIn.or')}</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* Mobile switch */}
         <p className="text-center text-sm text-gray-500 md:hidden">
-          Don't have an account?{' '}
+          {t('auth.signIn.noAccount')}{' '}
           <button type="button" onClick={onSwitch} className="text-blue-600 font-medium hover:underline">
-            Sign Up
+            {t('auth.signIn.switchToSignUp')}
           </button>
         </p>
       </form>
