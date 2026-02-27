@@ -1,36 +1,14 @@
 import { JobApplication } from '../../types'
 import StatusBadge from './StatusBadge'
 import { EditIcon, TrashIcon } from '../icons'
+import { getAvatarColor } from '../../lib/avatar'
+import { formatMedium } from '../../lib/dates'
 
 interface Props {
   applications: JobApplication[]
   onView: (app: JobApplication) => void
   onEdit: (app: JobApplication) => void
   onDelete: (app: JobApplication) => void
-}
-
-const AVATAR_COLORS = [
-  'bg-violet-100 text-violet-700',
-  'bg-blue-100 text-blue-700',
-  'bg-emerald-100 text-emerald-700',
-  'bg-amber-100 text-amber-700',
-  'bg-rose-100 text-rose-700',
-  'bg-cyan-100 text-cyan-700',
-  'bg-orange-100 text-orange-700',
-  'bg-indigo-100 text-indigo-700',
-]
-
-function getAvatarColor(name: string) {
-  const index = name.charCodeAt(0) % AVATAR_COLORS.length
-  return AVATAR_COLORS[index]
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }
 
 function EmptyState() {
@@ -93,7 +71,7 @@ export default function ApplicationsTable({ applications, onView, onEdit, onDele
 
               {/* Date */}
               <td className="px-6 py-4 whitespace-nowrap">
-                <span className="text-sm text-gray-500">{formatDate(app.applied_date)}</span>
+                <span className="text-sm text-gray-500">{formatMedium(app.applied_date)}</span>
               </td>
 
               {/* Actions — only visible on row hover */}

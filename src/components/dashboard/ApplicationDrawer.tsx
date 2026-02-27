@@ -2,39 +2,9 @@ import { useEffect } from 'react'
 import { JobApplication } from '../../types'
 import { STATUS_CONFIG } from '../../constants/applicationStatus'
 import StatusBadge from './StatusBadge'
-import { EditIcon, TrashIcon } from '../icons'
-
-const AVATAR_COLORS = [
-  'bg-violet-100 text-violet-700',
-  'bg-blue-100 text-blue-700',
-  'bg-emerald-100 text-emerald-700',
-  'bg-amber-100 text-amber-700',
-  'bg-rose-100 text-rose-700',
-  'bg-cyan-100 text-cyan-700',
-  'bg-orange-100 text-orange-700',
-  'bg-indigo-100 text-indigo-700',
-]
-
-function getAvatarColor(name: string) {
-  return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
-
-function formatDateTime(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
+import { EditIcon, TrashIcon, CloseIcon } from '../icons'
+import { getAvatarColor } from '../../lib/avatar'
+import { formatLong, formatMedium } from '../../lib/dates'
 
 interface Props {
   app: JobApplication | null
@@ -75,9 +45,7 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                 onClick={onClose}
                 className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <CloseIcon />
               </button>
             </div>
 
@@ -110,7 +78,7 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Applied</p>
-                    <p className="text-sm text-gray-800">{formatDate(app.applied_date)}</p>
+                    <p className="text-sm text-gray-800">{formatLong(app.applied_date)}</p>
                   </div>
                 </div>
 
@@ -122,7 +90,7 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Last Updated</p>
-                    <p className="text-sm text-gray-800">{formatDateTime(app.updated_at)}</p>
+                    <p className="text-sm text-gray-800">{formatMedium(app.updated_at)}</p>
                   </div>
                 </div>
 
