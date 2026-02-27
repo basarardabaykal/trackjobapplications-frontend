@@ -4,16 +4,9 @@ import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
 import ApplicationsTable from '../components/dashboard/ApplicationsTable'
 import AddApplicationModal from '../components/dashboard/AddApplicationModal'
+import { PlusIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
 import { JobApplication } from '../types'
-
-function PlusIcon() {
-  return (
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-    </svg>
-  )
-}
 
 export default function DashboardPage() {
   const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
