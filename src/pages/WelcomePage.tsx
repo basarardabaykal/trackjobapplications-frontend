@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import LanguageSwitcher from '../components/LanguageSwitcher'
+import LanguageSwitcher from '../components/welcome/LanguageSwitcher'
 import FeatureCard from '../components/welcome/FeatureCard'
 
 export default function WelcomePage() {
