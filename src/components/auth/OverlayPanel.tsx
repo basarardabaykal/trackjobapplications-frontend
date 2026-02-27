@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import LanguageSwitcher from '../LanguageSwitcher'
 
 interface Props {
   isSignUp: boolean
@@ -21,9 +20,6 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
         {/* Left panel — visible in Sign Up mode */}
         <div className="w-1/2 h-full flex flex-col items-center justify-center px-10 bg-gradient-to-br from-blue-700 to-blue-500 text-white relative overflow-hidden">
           <Decoration />
-          <div className="absolute top-5 right-5">
-            <LanguageSwitcher />
-          </div>
           <div className="relative z-10 text-center">
             <BriefcaseIcon />
             <h3 className="text-3xl font-bold mb-3 tracking-tight">TrackJobs</h3>
@@ -42,9 +38,6 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
         {/* Right panel — visible in Sign In mode */}
         <div className="w-1/2 h-full flex flex-col items-center justify-center px-10 bg-gradient-to-br from-blue-600 to-blue-800 text-white relative overflow-hidden">
           <Decoration />
-          <div className="absolute top-5 right-5">
-            <LanguageSwitcher />
-          </div>
           <div className="relative z-10 text-center">
             <BriefcaseIcon />
             <h3 className="text-3xl font-bold mb-3 tracking-tight">TrackJobs</h3>
