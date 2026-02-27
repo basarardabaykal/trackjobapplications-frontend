@@ -1,36 +1,36 @@
 {
   "nav": {
     "signIn": "Giriş Yap",
-    "getStarted": "Başla"
+    "getStarted": "Hemen Başla"
   },
   "welcome": {
-    "badge": "Ücretsiz — kredi kartı gerekmez",
+    "badge": "Tamamen ücretsiz — kredi kartı gerekmez",
     "headline": "İş başvurularını",
-    "headlineHighlight": "kontrol altına al",
-    "subtitle": "Her başvuruyu takip et, zamanında geri dön ve bir sonraki işine kavuş — hepsi tek bir yerde.",
-    "cta": "Ücretsiz başla",
+    "headlineHighlight": "tek yerden yönet",
+    "subtitle": "Her başvuruyu kaydet, sürecini takip et ve bir sonraki adımı asla kaçırma.",
+    "cta": "Ücretsiz dene",
     "features": {
       "track": {
-        "title": "Başvuruları takip et",
-        "description": "Başvurduğun her işi şirket, pozisyon ve güncel durumla kaydet."
+        "title": "Başvurularını kaydet",
+        "description": "Başvurduğun her pozisyonu şirket adı, rol ve güncel durumuyla listele."
       },
       "visualize": {
-        "title": "İlerlemeyi görselleştir",
-        "description": "Nerede olduğunu gör — başvuruldu, mülakat, teklif veya reddedildi."
+        "title": "Süreci takip et",
+        "description": "Hangi aşamada olduğunu bir bakışta gör — beklemede, mülakat, teklif ya da ret."
       },
       "followup": {
-        "title": "Takibi asla kaçırma",
-        "description": "Notlar ve tarihler ekle, sırada ne yapman gerektiğini her zaman bil."
+        "title": "Geri dönüşü kaçırma",
+        "description": "Not ve tarih ekle, sırada ne yapman gerektiğini her zaman bil."
       }
     }
   },
   "auth": {
     "signIn": {
       "title": "Giriş Yap",
-      "subtitle": "Tekrar hoş geldin! Bilgilerini gir.",
+      "subtitle": "Hoş geldin! Devam etmek için giriş yap.",
       "email": "E-posta adresi",
       "password": "Şifre",
-      "forgotPassword": "Şifremi unuttum?",
+      "forgotPassword": "Şifreni mi unuttun?",
       "submit": "GİRİŞ YAP",
       "or": "veya",
       "noAccount": "Hesabın yok mu?",
@@ -38,7 +38,7 @@
     },
     "signUp": {
       "title": "Hesap Oluştur",
-      "subtitle": "İş başvurularını takip etmeye bugün başla.",
+      "subtitle": "Hemen kaydol, başvurularını takip etmeye başla.",
       "fullName": "Ad Soyad",
       "email": "E-posta adresi",
       "password": "Şifre",
@@ -49,11 +49,11 @@
     },
     "overlay": {
       "signInPanel": {
-        "description": "Zaten hesabın var mı? Giriş yap ve kaldığın yerden devam et.",
+        "description": "Hesabın var mı? Giriş yap, kaldığın yerden devam et.",
         "button": "GİRİŞ YAP"
       },
       "signUpPanel": {
-        "description": "Yeni misin? Hesap oluştur ve iş aramayı kontrol altına al.",
+        "description": "Henüz hesabın yok mu? Ücretsiz kaydol, iş aramanı düzenli tut.",
         "button": "KAYIT OL"
       }
     }
