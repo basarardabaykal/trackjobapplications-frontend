@@ -10,13 +10,10 @@ import TableFilters from '../components/dashboard/TableFilters'
 import ApplicationDrawer from '../components/dashboard/ApplicationDrawer'
 import { PlusIcon, TableIcon, KanbanIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
-import { ApplicationStatus, JobApplication } from '../types'
+import { ApplicationStatus, JobApplication, ViewMode, SortKey, StatusFilter } from '../types'
 import { useToast } from '../context/ToastContext'
 
-type ViewMode = 'table' | 'kanban'
 
-type SortKey = 'date' | 'company' | 'status'
-type StatusFilter = ApplicationStatus | 'all'
 
 const STATUS_ORDER: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
 

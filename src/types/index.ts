@@ -27,3 +27,7 @@ export interface JobApplication {
   created_at: string
   updated_at: string
 }
+
+export type ViewMode = 'table' | 'kanban'
+export type SortKey = 'date' | 'company' | 'status'
+export type StatusFilter = ApplicationStatus | 'all'

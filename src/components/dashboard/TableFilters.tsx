@@ -1,8 +1,6 @@
-import { ApplicationStatus } from '../../types'
+import { ApplicationStatus, SortKey, StatusFilter } from '../../types'
 import { STATUS_CONFIG } from '../../constants/applicationStatus'
 
-type StatusFilter = ApplicationStatus | 'all'
-type SortKey = 'date' | 'company' | 'status'
 
 interface Props {
   search: string
