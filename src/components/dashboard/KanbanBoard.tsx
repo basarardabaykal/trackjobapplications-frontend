@@ -5,6 +5,7 @@ import { EditIcon, TrashIcon } from '../icons'
 
 interface Props {
   applications: JobApplication[]
+  onView: (app: JobApplication) => void
   onEdit: (app: JobApplication) => void
   onDelete: (app: JobApplication) => void
   onStatusChange: (id: number, newStatus: ApplicationStatus) => void
@@ -44,6 +45,7 @@ const COLUMN_ACCENT: Record<ApplicationStatus, string> = {
 
 interface CardProps {
   app: JobApplication
+  onView: (app: JobApplication) => void
   onEdit: (app: JobApplication) => void
   onDelete: (app: JobApplication) => void
   onDragStart: (id: number) => void
@@ -51,13 +53,14 @@ interface CardProps {
   isDragging: boolean
 }
 
-function KanbanCard({ app, onEdit, onDelete, onDragStart, onDragEnd, isDragging }: CardProps) {
+function KanbanCard({ app, onView, onEdit, onDelete, onDragStart, onDragEnd, isDragging }: CardProps) {
   return (
     <div
       draggable
       onDragStart={() => onDragStart(app.id)}
       onDragEnd={onDragEnd}
-      className={`group bg-white rounded-xl border shadow-sm p-4 transition-all duration-200 cursor-grab active:cursor-grabbing ${
+      onClick={() => onView(app)}
+      className={`group bg-white rounded-xl border shadow-sm p-4 transition-all duration-200 cursor-pointer ${
         isDragging
           ? 'opacity-40 scale-95 border-blue-200'
           : 'border-gray-100 hover:shadow-md hover:border-blue-100'
@@ -74,13 +77,13 @@ function KanbanCard({ app, onEdit, onDelete, onDragStart, onDragEnd, isDragging 
         </div>
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
           <button
-            onClick={() => onEdit(app)}
+            onClick={e => { e.stopPropagation(); onEdit(app) }}
             className="p-1 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
           >
             <EditIcon />
           </button>
           <button
-            onClick={() => onDelete(app)}
+            onClick={e => { e.stopPropagation(); onDelete(app) }}
             className="p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
           >
             <TrashIcon />
@@ -99,7 +102,7 @@ function KanbanCard({ app, onEdit, onDelete, onDragStart, onDragEnd, isDragging 
   )
 }
 
-export default function KanbanBoard({ applications, onEdit, onDelete, onStatusChange }: Props) {
+export default function KanbanBoard({ applications, onView, onEdit, onDelete, onStatusChange }: Props) {
   const draggedId = useRef<number | null>(null)
   const [draggingId, setDraggingId] = useState<number | null>(null)
   const [dragOverCol, setDragOverCol] = useState<ApplicationStatus | null>(null)
@@ -173,6 +176,7 @@ export default function KanbanBoard({ applications, onEdit, onDelete, onStatusCh
                   <KanbanCard
                     key={app.id}
                     app={app}
+                    onView={onView}
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onDragStart={handleDragStart}
