@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import Sidebar from '../components/dashboard/Sidebar'
 import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
 import ApplicationsTable from '../components/dashboard/ApplicationsTable'
+import AddApplicationModal from '../components/dashboard/AddApplicationModal'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
+import { JobApplication } from '../types'
 
 function PlusIcon() {
   return (
@@ -13,7 +16,8 @@ function PlusIcon() {
 }
 
 export default function DashboardPage() {
-  const apps = MOCK_APPLICATIONS
+  const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
+  const [modalOpen, setModalOpen] = useState(false)
 
   const stats = {
     total: apps.length,
@@ -21,6 +25,17 @@ export default function DashboardPage() {
     interview: apps.filter(a => a.status === 'interview').length,
     offer: apps.filter(a => a.status === 'offer').length,
     rejected: apps.filter(a => a.status === 'rejected').length,
+  }
+
+  function handleAdd(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
+    const now = new Date().toISOString()
+    const newApp: JobApplication = {
+      ...data,
+      id: Date.now(),
+      created_at: now,
+      updated_at: now,
+    }
+    setApps(prev => [newApp, ...prev])
   }
 
   return (
@@ -32,7 +47,10 @@ export default function DashboardPage() {
           <Header
             title="Applications"
             action={
-              <button className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200">
+              <button
+                onClick={() => setModalOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
+              >
                 <PlusIcon />
                 Add Application
               </button>
@@ -50,6 +68,12 @@ export default function DashboardPage() {
           <ApplicationsTable applications={apps} />
         </div>
       </div>
+
+      <AddApplicationModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleAdd}
+      />
     </div>
   )
 }
