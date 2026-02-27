@@ -4,6 +4,8 @@ import { EditIcon, TrashIcon } from '../icons'
 
 interface Props {
   applications: JobApplication[]
+  onEdit: (app: JobApplication) => void
+  onDelete: (app: JobApplication) => void
 }
 
 const AVATAR_COLORS = [
@@ -44,7 +46,7 @@ function EmptyState() {
   )
 }
 
-export default function ApplicationsTable({ applications }: Props) {
+export default function ApplicationsTable({ applications, onEdit, onDelete }: Props) {
   if (applications.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -96,10 +98,16 @@ export default function ApplicationsTable({ applications }: Props) {
               {/* Actions — only visible on row hover */}
               <td className="px-6 py-4">
                 <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                  <button className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-100 transition-colors">
+                  <button
+                    onClick={() => onEdit(app)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-100 transition-colors"
+                  >
                     <EditIcon />
                   </button>
-                  <button className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
+                  <button
+                    onClick={() => onDelete(app)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                  >
                     <TrashIcon />
                   </button>
                 </div>
