@@ -82,6 +82,12 @@ export default function DashboardPage() {
     )
   }
 
+  function handleStatusChange(id: number, newStatus: ApplicationStatus) {
+    setApps(prev =>
+      prev.map(a => (a.id === id ? { ...a, status: newStatus, updated_at: new Date().toISOString() } : a)),
+    )
+  }
+
   function handleDelete() {
     if (!deleteTarget) return
     setApps(prev => prev.filter(a => a.id !== deleteTarget.id))
@@ -156,6 +162,7 @@ export default function DashboardPage() {
               applications={filtered}
               onEdit={app => setEditTarget(app)}
               onDelete={app => setDeleteTarget(app)}
+              onStatusChange={handleStatusChange}
             />
           )}
         </div>
