@@ -1,10 +1,45 @@
+import { useState } from 'react'
+import SignInForm from '../components/auth/SignInForm'
+import SignUpForm from '../components/auth/SignUpForm'
+import OverlayPanel from '../components/auth/OverlayPanel'
+
 export default function LoginPage() {
+  const [isSignUp, setIsSignUp] = useState(false)
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
-        <p className="text-center text-gray-500 text-sm">Coming soon</p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4">
+      {/* Card */}
+      <div className="relative w-full max-w-4xl h-[560px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        {/* Sign Up Form — right side */}
+        <div
+          className="absolute top-0 right-0 w-1/2 h-full transition-all duration-700 ease-in-out"
+          style={{
+            opacity: isSignUp ? 1 : 0,
+            zIndex: isSignUp ? 5 : 1,
+          }}
+        >
+          <SignUpForm onSwitch={() => setIsSignUp(false)} />
+        </div>
+
+        {/* Sign In Form — left side */}
+        <div
+          className="absolute top-0 left-0 w-1/2 h-full transition-all duration-700 ease-in-out"
+          style={{
+            opacity: isSignUp ? 0 : 1,
+            zIndex: isSignUp ? 1 : 5,
+          }}
+        >
+          <SignInForm onSwitch={() => setIsSignUp(true)} />
+        </div>
+
+        {/* Sliding Overlay */}
+        <OverlayPanel isSignUp={isSignUp} onSwitch={() => setIsSignUp(!isSignUp)} />
       </div>
+
+      <p className="absolute bottom-6 text-xs text-gray-400">
+        © {new Date().getFullYear()} TrackJobs. All rights reserved.
+      </p>
     </div>
   )
 }
