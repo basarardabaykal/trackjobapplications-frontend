@@ -6,6 +6,22 @@ interface Props {
   applications: JobApplication[]
 }
 
+const AVATAR_COLORS = [
+  'bg-violet-100 text-violet-700',
+  'bg-blue-100 text-blue-700',
+  'bg-emerald-100 text-emerald-700',
+  'bg-amber-100 text-amber-700',
+  'bg-rose-100 text-rose-700',
+  'bg-cyan-100 text-cyan-700',
+  'bg-orange-100 text-orange-700',
+  'bg-indigo-100 text-indigo-700',
+]
+
+function getAvatarColor(name: string) {
+  const index = name.charCodeAt(0) % AVATAR_COLORS.length
+  return AVATAR_COLORS[index]
+}
+
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-US', {
     month: 'short',
@@ -16,7 +32,7 @@ function formatDate(dateStr: string) {
 
 function EmptyState() {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-4">
         <svg className="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -41,38 +57,46 @@ export default function ApplicationsTable({ applications }: Props) {
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-100">
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">Company</th>
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">Position</th>
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">Status</th>
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">Applied</th>
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-4">Notes</th>
-            <th className="px-6 py-4" />
+          <tr className="border-b border-gray-100 bg-gray-50/50">
+            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Company</th>
+            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Status</th>
+            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Applied</th>
+            <th className="w-20 px-6 py-3.5" />
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-50">
           {applications.map(app => (
-            <tr key={app.id} className="hover:bg-gray-50/60 transition-colors">
+            <tr key={app.id} className="group hover:bg-blue-50/30 transition-colors duration-150">
+              {/* Company + Position + Notes */}
               <td className="px-6 py-4">
-                <span className="text-sm font-semibold text-gray-900">{app.company}</span>
+                <div className="flex items-center gap-3.5">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 ${getAvatarColor(app.company)}`}>
+                    {app.company[0].toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 leading-tight">{app.company}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 truncate">{app.position}</p>
+                    {app.notes && (
+                      <p className="text-xs text-gray-400 mt-0.5 truncate max-w-xs italic">{app.notes}</p>
+                    )}
+                  </div>
+                </div>
               </td>
-              <td className="px-6 py-4">
-                <span className="text-sm text-gray-600">{app.position}</span>
-              </td>
+
+              {/* Status */}
               <td className="px-6 py-4">
                 <StatusBadge status={app.status} />
               </td>
-              <td className="px-6 py-4">
+
+              {/* Date */}
+              <td className="px-6 py-4 whitespace-nowrap">
                 <span className="text-sm text-gray-500">{formatDate(app.applied_date)}</span>
               </td>
-              <td className="px-6 py-4 max-w-xs">
-                <span className="text-sm text-gray-400 truncate block">
-                  {app.notes || <span className="italic">—</span>}
-                </span>
-              </td>
+
+              {/* Actions — only visible on row hover */}
               <td className="px-6 py-4">
-                <div className="flex items-center gap-1 justify-end">
-                  <button className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors">
+                <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                  <button className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-100 transition-colors">
                     <EditIcon />
                   </button>
                   <button className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
