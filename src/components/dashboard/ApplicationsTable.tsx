@@ -1,6 +1,7 @@
+import { useTranslation } from 'react-i18next'
 import { JobApplication } from '../../types'
 import StatusBadge from './StatusBadge'
-import { EditIcon, TrashIcon } from '../icons'
+import { EditIcon, TrashIcon, ClipboardIcon } from '../icons'
 import { getAvatarColor } from '../../lib/avatar'
 import { formatMedium } from '../../lib/dates'
 
@@ -12,20 +13,21 @@ interface Props {
 }
 
 function EmptyState() {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-4">
-        <svg className="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
+      <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mb-4 text-blue-400">
+        <ClipboardIcon />
       </div>
-      <p className="text-sm font-medium text-gray-700 mb-1">No applications yet</p>
-      <p className="text-xs text-gray-400">Add your first job application to get started.</p>
+      <p className="text-sm font-medium text-gray-700 mb-1">{t('dashboard.table.emptyTitle')}</p>
+      <p className="text-xs text-gray-400">{t('dashboard.table.emptySubtitle')}</p>
     </div>
   )
 }
 
 export default function ApplicationsTable({ applications, onView, onEdit, onDelete }: Props) {
+  const { t } = useTranslation()
+
   if (applications.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -39,9 +41,9 @@ export default function ApplicationsTable({ applications, onView, onEdit, onDele
       <table className="w-full">
         <thead>
           <tr className="border-b border-gray-100 bg-gray-50/50">
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Company</th>
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Status</th>
-            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">Applied</th>
+            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">{t('dashboard.table.company')}</th>
+            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">{t('dashboard.table.status')}</th>
+            <th className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-6 py-3.5">{t('dashboard.table.applied')}</th>
             <th className="w-20 px-6 py-3.5" />
           </tr>
         </thead>
