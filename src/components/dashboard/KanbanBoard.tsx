@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { JobApplication, ApplicationStatus } from '../../types'
 import { STATUS_CONFIG, STATUS_COLORS } from '../../constants/applicationStatus'
 import { EditIcon, TrashIcon } from '../icons'
@@ -75,9 +76,20 @@ function KanbanCard({ app, onView, onEdit, onDelete, onDragStart, onDragEnd, isD
 }
 
 export default function KanbanBoard({ applications, onView, onEdit, onDelete, onStatusChange }: Props) {
+  const { t } = useTranslation()
   const draggedId = useRef<number | null>(null)
   const [draggingId, setDraggingId] = useState<number | null>(null)
   const [dragOverCol, setDragOverCol] = useState<ApplicationStatus | null>(null)
+
+  const grouped = useMemo(() => {
+    const map: Record<ApplicationStatus, JobApplication[]> = {
+      applied: [], interview: [], offer: [], rejected: [], withdrawn: [],
+    }
+    for (const app of applications) {
+      map[app.status].push(app)
+    }
+    return map
+  }, [applications])
 
   function handleDragStart(id: number) {
     draggedId.current = id
@@ -110,7 +122,7 @@ export default function KanbanBoard({ applications, onView, onEdit, onDelete, on
   return (
     <div className="flex gap-4 overflow-x-auto pb-4">
       {COLUMNS.map(status => {
-        const colApps = applications.filter(a => a.status === status)
+        const colApps = grouped[status]
         const config = STATUS_CONFIG[status]
         const isOver = dragOverCol === status
 
@@ -141,7 +153,7 @@ export default function KanbanBoard({ applications, onView, onEdit, onDelete, on
             >
               {colApps.length === 0 && !isOver ? (
                 <div className="rounded-xl border-2 border-dashed border-gray-100 py-8 text-center">
-                  <p className="text-xs text-gray-300">No applications</p>
+                  <p className="text-xs text-gray-300">{t('dashboard.kanban.noApplications')}</p>
                 </div>
               ) : (
                 colApps.map(app => (
