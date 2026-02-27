@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import Sidebar from '../components/dashboard/Sidebar'
 import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
@@ -10,12 +10,11 @@ import TableFilters from '../components/dashboard/TableFilters'
 import ApplicationDrawer from '../components/dashboard/ApplicationDrawer'
 import { PlusIcon, TableIcon, KanbanIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
-import { ApplicationStatus, JobApplication, ViewMode, SortKey, StatusFilter } from '../types'
+import { ApplicationStatus, JobApplication, ViewMode } from '../types'
 import { useToast } from '../context/ToastContext'
+import { useApplicationFilters } from '../hooks/useApplicationFilters'
 
 
-
-const STATUS_ORDER: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
 
 export default function DashboardPage() {
   const { addToast } = useToast()
@@ -32,36 +31,8 @@ export default function DashboardPage() {
   const [editTarget, setEditTarget] = useState<JobApplication | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<JobApplication | null>(null)
 
-  // Filter / sort state
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
-  const [sortKey, setSortKey] = useState<SortKey>('date')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
-
-  function handleSortChange(key: SortKey) {
-    if (sortKey === key) {
-      setSortDir(d => (d === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setSortKey(key)
-      setSortDir('asc')
-    }
-  }
-
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase()
-    return apps
-      .filter(a => statusFilter === 'all' || a.status === statusFilter)
-      .filter(a =>
-        a.company.toLowerCase().includes(q) || a.position.toLowerCase().includes(q),
-      )
-      .sort((a, b) => {
-        let cmp = 0
-        if (sortKey === 'date') cmp = a.applied_date.localeCompare(b.applied_date)
-        if (sortKey === 'company') cmp = a.company.localeCompare(b.company)
-        if (sortKey === 'status') cmp = STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status)
-        return sortDir === 'asc' ? cmp : -cmp
-      })
-  }, [apps, search, statusFilter, sortKey, sortDir])
+  const { search, setSearch, statusFilter, setStatusFilter, sortKey, sortDir, handleSortChange, filtered } =
+    useApplicationFilters(apps)
 
   const stats = {
     total: apps.length,
