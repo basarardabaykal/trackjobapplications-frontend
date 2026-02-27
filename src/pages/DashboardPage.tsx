@@ -1,16 +1,70 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Sidebar from '../components/dashboard/Sidebar'
 import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
 import ApplicationsTable from '../components/dashboard/ApplicationsTable'
+import KanbanBoard from '../components/dashboard/KanbanBoard'
 import AddApplicationModal from '../components/dashboard/AddApplicationModal'
-import { PlusIcon } from '../components/icons'
+import ConfirmModal from '../components/dashboard/ConfirmModal'
+import TableFilters from '../components/dashboard/TableFilters'
+import ApplicationDrawer from '../components/dashboard/ApplicationDrawer'
+import { PlusIcon, TableIcon, KanbanIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
-import { JobApplication } from '../types'
+import { ApplicationStatus, JobApplication } from '../types'
+import { useToast } from '../context/ToastContext'
+
+type ViewMode = 'table' | 'kanban'
+
+type SortKey = 'date' | 'company' | 'status'
+type StatusFilter = ApplicationStatus | 'all'
+
+const STATUS_ORDER: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
 
 export default function DashboardPage() {
+  const { addToast } = useToast()
   const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
-  const [modalOpen, setModalOpen] = useState(false)
+
+  // View mode
+  const [view, setView] = useState<ViewMode>('table')
+
+  // Drawer state
+  const [drawerApp, setDrawerApp] = useState<JobApplication | null>(null)
+
+  // Modal state
+  const [addOpen, setAddOpen] = useState(false)
+  const [editTarget, setEditTarget] = useState<JobApplication | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<JobApplication | null>(null)
+
+  // Filter / sort state
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [sortKey, setSortKey] = useState<SortKey>('date')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+
+  function handleSortChange(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir(d => (d === 'asc' ? 'desc' : 'asc'))
+    } else {
+      setSortKey(key)
+      setSortDir('asc')
+    }
+  }
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    return apps
+      .filter(a => statusFilter === 'all' || a.status === statusFilter)
+      .filter(a =>
+        a.company.toLowerCase().includes(q) || a.position.toLowerCase().includes(q),
+      )
+      .sort((a, b) => {
+        let cmp = 0
+        if (sortKey === 'date') cmp = a.applied_date.localeCompare(b.applied_date)
+        if (sortKey === 'company') cmp = a.company.localeCompare(b.company)
+        if (sortKey === 'status') cmp = STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status)
+        return sortDir === 'asc' ? cmp : -cmp
+      })
+  }, [apps, search, statusFilter, sortKey, sortDir])
 
   const stats = {
     total: apps.length,
@@ -22,13 +76,32 @@ export default function DashboardPage() {
 
   function handleAdd(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
     const now = new Date().toISOString()
-    const newApp: JobApplication = {
-      ...data,
-      id: Date.now(),
-      created_at: now,
-      updated_at: now,
-    }
-    setApps(prev => [newApp, ...prev])
+    setApps(prev => [{ ...data, id: Date.now(), created_at: now, updated_at: now }, ...prev])
+    addToast('Application added')
+  }
+
+  function handleEdit(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
+    if (!editTarget) return
+    setApps(prev =>
+      prev.map(a =>
+        a.id === editTarget.id ? { ...a, ...data, updated_at: new Date().toISOString() } : a,
+      ),
+    )
+    addToast('Changes saved')
+  }
+
+  function handleStatusChange(id: number, newStatus: ApplicationStatus) {
+    setApps(prev =>
+      prev.map(a => (a.id === id ? { ...a, status: newStatus, updated_at: new Date().toISOString() } : a)),
+    )
+    addToast('Status updated')
+  }
+
+  function handleDelete() {
+    if (!deleteTarget) return
+    setApps(prev => prev.filter(a => a.id !== deleteTarget.id))
+    setDeleteTarget(null)
+    addToast('Application deleted', 'error')
   }
 
   return (
@@ -40,13 +113,33 @@ export default function DashboardPage() {
           <Header
             title="Applications"
             action={
-              <button
-                onClick={() => setModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
-              >
-                <PlusIcon />
-                Add Application
-              </button>
+              <div className="flex items-center gap-2">
+                {/* View toggle */}
+                <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5">
+                  <button
+                    onClick={() => setView('table')}
+                    className={`p-1.5 rounded-lg transition-colors ${view === 'table' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                    title="Table view"
+                  >
+                    <TableIcon />
+                  </button>
+                  <button
+                    onClick={() => setView('kanban')}
+                    className={`p-1.5 rounded-lg transition-colors ${view === 'kanban' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                    title="Kanban view"
+                  >
+                    <KanbanIcon />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setAddOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
+                >
+                  <PlusIcon />
+                  Add Application
+                </button>
+              </div>
             }
           />
 
@@ -58,14 +151,66 @@ export default function DashboardPage() {
             <StatCard label="Rejected" value={stats.rejected} color="text-red-500" />
           </div>
 
-          <ApplicationsTable applications={apps} />
+          <TableFilters
+            search={search}
+            onSearchChange={setSearch}
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSortChange={handleSortChange}
+          />
+
+          {view === 'table' ? (
+            <ApplicationsTable
+              applications={filtered}
+              onView={app => setDrawerApp(app)}
+              onEdit={app => setEditTarget(app)}
+              onDelete={app => setDeleteTarget(app)}
+            />
+          ) : (
+            <KanbanBoard
+              applications={filtered}
+              onView={app => setDrawerApp(app)}
+              onEdit={app => setEditTarget(app)}
+              onDelete={app => setDeleteTarget(app)}
+              onStatusChange={handleStatusChange}
+            />
+          )}
         </div>
       </div>
 
       <AddApplicationModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
         onSubmit={handleAdd}
+      />
+
+      <AddApplicationModal
+        open={!!editTarget}
+        onClose={() => setEditTarget(null)}
+        onSubmit={handleEdit}
+        initialData={editTarget ?? undefined}
+      />
+
+      <ConfirmModal
+        open={!!deleteTarget}
+        title="Delete application"
+        description={
+          deleteTarget
+            ? `Remove ${deleteTarget.company} — ${deleteTarget.position}? This cannot be undone.`
+            : ''
+        }
+        confirmLabel="Delete"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
+      <ApplicationDrawer
+        app={drawerApp}
+        onClose={() => setDrawerApp(null)}
+        onEdit={app => { setDrawerApp(null); setEditTarget(app) }}
+        onDelete={app => { setDrawerApp(null); setDeleteTarget(app) }}
       />
     </div>
   )

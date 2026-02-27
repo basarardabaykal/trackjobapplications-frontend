@@ -7,6 +7,7 @@ interface FormData {
   position: string
   status: ApplicationStatus
   applied_date: string
+  url: string
   notes: string
 }
 
@@ -14,6 +15,7 @@ interface Props {
   open: boolean
   onClose: () => void
   onSubmit: (data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) => void
+  initialData?: JobApplication
 }
 
 const INITIAL_FORM: FormData = {
@@ -21,21 +23,34 @@ const INITIAL_FORM: FormData = {
   position: '',
   status: 'applied',
   applied_date: new Date().toISOString().split('T')[0],
+  url: '',
   notes: '',
 }
 
-export default function AddApplicationModal({ open, onClose, onSubmit }: Props) {
+function toFormData(app: JobApplication): FormData {
+  return {
+    company: app.company,
+    position: app.position,
+    status: app.status,
+    applied_date: app.applied_date,
+    url: app.url ?? '',
+    notes: app.notes,
+  }
+}
+
+export default function AddApplicationModal({ open, onClose, onSubmit, initialData }: Props) {
+  const isEdit = !!initialData
   const [form, setForm] = useState<FormData>(INITIAL_FORM)
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const firstInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (open) {
-      setForm(INITIAL_FORM)
+      setForm(initialData ? toFormData(initialData) : INITIAL_FORM)
       setErrors({})
       setTimeout(() => firstInputRef.current?.focus(), 50)
     }
-  }, [open])
+  }, [open, initialData])
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -62,6 +77,7 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
       position: form.position.trim(),
       status: form.status,
       applied_date: form.applied_date,
+      url: form.url.trim() || undefined,
       notes: form.notes.trim(),
     })
     onClose()
@@ -71,17 +87,13 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Modal */}
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">Add Application</h2>
+          <h2 className="text-base font-semibold text-gray-900">
+            {isEdit ? 'Edit Application' : 'Add Application'}
+          </h2>
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
@@ -92,10 +104,8 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} noValidate>
           <div className="px-6 py-5 space-y-4">
-            {/* Company */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Company <span className="text-red-400">*</span>
@@ -115,7 +125,6 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
               {errors.company && <p className="mt-1 text-xs text-red-500">{errors.company}</p>}
             </div>
 
-            {/* Position */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
                 Position <span className="text-red-400">*</span>
@@ -134,7 +143,6 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
               {errors.position && <p className="mt-1 text-xs text-red-500">{errors.position}</p>}
             </div>
 
-            {/* Status + Date row */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
@@ -167,11 +175,21 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
               </div>
             </div>
 
-            {/* Notes */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Job URL</label>
+              <input
+                type="url"
+                placeholder="https://company.com/jobs/..."
+                value={form.url}
+                onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors placeholder:text-gray-300"
+              />
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Notes</label>
               <textarea
-                placeholder="Any notes about this application..."
+                placeholder="Interview notes, questions, links..."
                 value={form.notes}
                 onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                 rows={3}
@@ -180,7 +198,6 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
             </div>
           </div>
 
-          {/* Footer */}
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50">
             <button
               type="button"
@@ -193,7 +210,7 @@ export default function AddApplicationModal({ open, onClose, onSubmit }: Props) 
               type="submit"
               className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
             >
-              Save Application
+              {isEdit ? 'Save Changes' : 'Save Application'}
             </button>
           </div>
         </form>
