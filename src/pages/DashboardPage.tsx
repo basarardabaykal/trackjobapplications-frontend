@@ -3,12 +3,15 @@ import Sidebar from '../components/dashboard/Sidebar'
 import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
 import ApplicationsTable from '../components/dashboard/ApplicationsTable'
+import KanbanBoard from '../components/dashboard/KanbanBoard'
 import AddApplicationModal from '../components/dashboard/AddApplicationModal'
 import ConfirmModal from '../components/dashboard/ConfirmModal'
 import TableFilters from '../components/dashboard/TableFilters'
-import { PlusIcon } from '../components/icons'
+import { PlusIcon, TableIcon, KanbanIcon } from '../components/icons'
 import { MOCK_APPLICATIONS } from '../data/mockApplications'
 import { ApplicationStatus, JobApplication } from '../types'
+
+type ViewMode = 'table' | 'kanban'
 
 type SortKey = 'date' | 'company' | 'status'
 type StatusFilter = ApplicationStatus | 'all'
@@ -17,6 +20,9 @@ const STATUS_ORDER: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rej
 
 export default function DashboardPage() {
   const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
+
+  // View mode
+  const [view, setView] = useState<ViewMode>('table')
 
   // Modal state
   const [addOpen, setAddOpen] = useState(false)
@@ -91,13 +97,33 @@ export default function DashboardPage() {
           <Header
             title="Applications"
             action={
-              <button
-                onClick={() => setAddOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
-              >
-                <PlusIcon />
-                Add Application
-              </button>
+              <div className="flex items-center gap-2">
+                {/* View toggle */}
+                <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-0.5">
+                  <button
+                    onClick={() => setView('table')}
+                    className={`p-1.5 rounded-lg transition-colors ${view === 'table' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                    title="Table view"
+                  >
+                    <TableIcon />
+                  </button>
+                  <button
+                    onClick={() => setView('kanban')}
+                    className={`p-1.5 rounded-lg transition-colors ${view === 'kanban' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                    title="Kanban view"
+                  >
+                    <KanbanIcon />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setAddOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
+                >
+                  <PlusIcon />
+                  Add Application
+                </button>
+              </div>
             }
           />
 
@@ -119,11 +145,19 @@ export default function DashboardPage() {
             onSortChange={handleSortChange}
           />
 
-          <ApplicationsTable
-            applications={filtered}
-            onEdit={app => setEditTarget(app)}
-            onDelete={app => setDeleteTarget(app)}
-          />
+          {view === 'table' ? (
+            <ApplicationsTable
+              applications={filtered}
+              onEdit={app => setEditTarget(app)}
+              onDelete={app => setDeleteTarget(app)}
+            />
+          ) : (
+            <KanbanBoard
+              applications={filtered}
+              onEdit={app => setEditTarget(app)}
+              onDelete={app => setDeleteTarget(app)}
+            />
+          )}
         </div>
       </div>
 
