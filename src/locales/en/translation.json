@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "signIn": "Sign In",
+    "getStarted": "Get Started"
+  },
+  "welcome": {
+    "badge": "Free to use — no credit card required",
+    "headline": "Take control of your",
+    "headlineHighlight": "job search",
+    "subtitle": "Track every application, follow up on time, and land your next job — all in one place.",
+    "cta": "Start tracking for free",
+    "features": {
+      "track": {
+        "title": "Track applications",
+        "description": "Log every job you apply to with company, role, and current status."
+      },
+      "visualize": {
+        "title": "Visualize progress",
+        "description": "See where you stand — applied, interviewing, offer, or rejected."
+      },
+      "followup": {
+        "title": "Never miss a follow-up",
+        "description": "Add notes and dates so you always know what to do next."
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign In",
+      "subtitle": "Welcome back! Please enter your details.",
+      "email": "Email address",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "SIGN IN",
+      "or": "or",
+      "noAccount": "Don't have an account?",
+      "switchToSignUp": "Sign Up"
+    },
+    "signUp": {
+      "title": "Create Account",
+      "subtitle": "Start tracking your job applications today.",
+      "fullName": "Full name",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "SIGN UP",
+      "or": "or",
+      "hasAccount": "Already have an account?",
+      "switchToSignIn": "Sign In"
+    },
+    "overlay": {
+      "signInPanel": {
+        "description": "Already have an account? Sign in and continue where you left off.",
+        "button": "SIGN IN"
+      },
+      "signUpPanel": {
+        "description": "New here? Create an account and take control of your job search.",
+        "button": "SIGN UP"
+      }
+    }
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  }
+}

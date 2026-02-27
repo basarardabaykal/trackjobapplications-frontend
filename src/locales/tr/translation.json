@@ -1,0 +1,64 @@
+{
+  "nav": {
+    "signIn": "Giriş Yap",
+    "getStarted": "Başla"
+  },
+  "welcome": {
+    "badge": "Ücretsiz — kredi kartı gerekmez",
+    "headline": "İş başvurularını",
+    "headlineHighlight": "kontrol altına al",
+    "subtitle": "Her başvuruyu takip et, zamanında geri dön ve bir sonraki işine kavuş — hepsi tek bir yerde.",
+    "cta": "Ücretsiz başla",
+    "features": {
+      "track": {
+        "title": "Başvuruları takip et",
+        "description": "Başvurduğun her işi şirket, pozisyon ve güncel durumla kaydet."
+      },
+      "visualize": {
+        "title": "İlerlemeyi görselleştir",
+        "description": "Nerede olduğunu gör — başvuruldu, mülakat, teklif veya reddedildi."
+      },
+      "followup": {
+        "title": "Takibi asla kaçırma",
+        "description": "Notlar ve tarihler ekle, sırada ne yapman gerektiğini her zaman bil."
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Giriş Yap",
+      "subtitle": "Tekrar hoş geldin! Bilgilerini gir.",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "forgotPassword": "Şifremi unuttum?",
+      "submit": "GİRİŞ YAP",
+      "or": "veya",
+      "noAccount": "Hesabın yok mu?",
+      "switchToSignUp": "Kayıt Ol"
+    },
+    "signUp": {
+      "title": "Hesap Oluştur",
+      "subtitle": "İş başvurularını takip etmeye bugün başla.",
+      "fullName": "Ad Soyad",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "submit": "KAYIT OL",
+      "or": "veya",
+      "hasAccount": "Zaten hesabın var mı?",
+      "switchToSignIn": "Giriş Yap"
+    },
+    "overlay": {
+      "signInPanel": {
+        "description": "Zaten hesabın var mı? Giriş yap ve kaldığın yerden devam et.",
+        "button": "GİRİŞ YAP"
+      },
+      "signUpPanel": {
+        "description": "Yeni misin? Hesap oluştur ve iş aramayı kontrol altına al.",
+        "button": "KAYIT OL"
+      }
+    }
+  },
+  "footer": {
+    "rights": "Tüm hakları saklıdır."
+  }
+}
