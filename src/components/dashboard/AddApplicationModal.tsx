@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ApplicationStatus, JobApplication } from '../../types'
+import { STATUS_OPTIONS } from '../../constants/applicationStatus'
 
 interface FormData {
   company: string
@@ -14,14 +15,6 @@ interface Props {
   onClose: () => void
   onSubmit: (data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) => void
 }
-
-const STATUS_OPTIONS: { value: ApplicationStatus; label: string }[] = [
-  { value: 'applied', label: 'Applied' },
-  { value: 'interview', label: 'Interview' },
-  { value: 'offer', label: 'Offer' },
-  { value: 'rejected', label: 'Rejected' },
-  { value: 'withdrawn', label: 'Withdrawn' },
-]
 
 const INITIAL_FORM: FormData = {
   company: '',
