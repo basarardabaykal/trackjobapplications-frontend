@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 interface Props {
@@ -39,13 +40,14 @@ function EyeIcon({ open }: { open: boolean }) {
 
 export default function SignInForm({ onSwitch }: Props) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Sign in:', { email, password })
+    navigate('/dashboard')
   }
 
   return (
