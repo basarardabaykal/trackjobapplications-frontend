@@ -4,6 +4,7 @@ import { EditIcon, TrashIcon } from '../icons'
 
 interface Props {
   applications: JobApplication[]
+  onView: (app: JobApplication) => void
   onEdit: (app: JobApplication) => void
   onDelete: (app: JobApplication) => void
 }
@@ -46,7 +47,7 @@ function EmptyState() {
   )
 }
 
-export default function ApplicationsTable({ applications, onEdit, onDelete }: Props) {
+export default function ApplicationsTable({ applications, onView, onEdit, onDelete }: Props) {
   if (applications.length === 0) {
     return (
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -68,7 +69,7 @@ export default function ApplicationsTable({ applications, onEdit, onDelete }: Pr
         </thead>
         <tbody className="divide-y divide-gray-50">
           {applications.map(app => (
-            <tr key={app.id} className="group hover:bg-blue-50/30 transition-colors duration-150">
+            <tr key={app.id} onClick={() => onView(app)} className="group hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
               {/* Company + Position + Notes */}
               <td className="px-6 py-4">
                 <div className="flex items-center gap-3.5">
@@ -99,13 +100,13 @@ export default function ApplicationsTable({ applications, onEdit, onDelete }: Pr
               <td className="px-6 py-4">
                 <div className="flex items-center gap-1 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                   <button
-                    onClick={() => onEdit(app)}
+                    onClick={e => { e.stopPropagation(); onEdit(app) }}
                     className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-100 transition-colors"
                   >
                     <EditIcon />
                   </button>
                   <button
-                    onClick={() => onDelete(app)}
+                    onClick={e => { e.stopPropagation(); onDelete(app) }}
                     className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                   >
                     <TrashIcon />
