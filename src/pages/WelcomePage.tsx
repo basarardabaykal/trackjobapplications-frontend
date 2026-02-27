@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from '../components/LanguageSwitcher'
+import FeatureCard from '../components/welcome/FeatureCard'
 
 export default function WelcomePage() {
   const navigate = useNavigate()
@@ -107,24 +108,6 @@ export default function WelcomePage() {
       <footer className="text-center py-5 text-xs text-gray-400">
         © {new Date().getFullYear()} TrackJobs. {t('footer.rights')}
       </footer>
-    </div>
-  )
-}
-
-interface FeatureCardProps {
-  icon: React.ReactNode
-  title: string
-  description: string
-}
-
-function FeatureCard({ icon, title, description }: FeatureCardProps) {
-  return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200 text-left">
-      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
-        {icon}
-      </div>
-      <h3 className="text-sm font-semibold text-gray-800 mb-1.5">{title}</h3>
-      <p className="text-xs text-gray-500 leading-relaxed">{description}</p>
     </div>
   )
 }
