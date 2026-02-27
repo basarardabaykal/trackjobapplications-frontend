@@ -1,7 +1,14 @@
+type StatCardColor =
+  | 'text-gray-900'
+  | 'text-blue-600'
+  | 'text-amber-600'
+  | 'text-emerald-600'
+  | 'text-red-500'
+
 interface Props {
   label: string
   value: string | number
-  color: string
+  color: StatCardColor
 }
 
 export default function StatCard({ label, value, color }: Props) {
