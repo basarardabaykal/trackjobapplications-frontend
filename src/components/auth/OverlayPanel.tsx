@@ -12,7 +12,7 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
       {/* Inner sliding container — 200% wide, slides left/right */}
       <div
         className="relative flex w-[200%] h-full transition-transform duration-700 ease-in-out"
-        style={{ transform: isSignUp ? 'translateX(50%)' : 'translateX(0)' }}
+        style={{ transform: isSignUp ? 'translateX(0)' : 'translateX(-50%)' }}
       >
         {/* Left panel — visible in Sign Up mode */}
         <div className="w-1/2 h-full flex flex-col items-center justify-center px-10 bg-gradient-to-br from-blue-700 to-blue-500 text-white relative overflow-hidden">
