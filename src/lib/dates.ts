@@ -1,6 +1,12 @@
+import i18n from './i18n'
+
+function locale(): string {
+  return i18n.language || 'en'
+}
+
 /** "Feb 10" */
 export function formatShort(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(locale(), {
     month: 'short',
     day: 'numeric',
   })
@@ -8,7 +14,7 @@ export function formatShort(dateStr: string): string {
 
 /** "Feb 10, 2026" */
 export function formatMedium(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(locale(), {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -17,7 +23,7 @@ export function formatMedium(dateStr: string): string {
 
 /** "Tue, February 10, 2026" */
 export function formatLong(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(locale(), {
     weekday: 'short',
     month: 'long',
     day: 'numeric',
@@ -28,7 +34,7 @@ export function formatLong(dateStr: string): string {
 /** "Feb 2026" */
 export function formatMonthYear(key: string): string {
   const [year, month] = key.split('-')
-  return new Date(Number(year), Number(month) - 1).toLocaleDateString('en-US', {
+  return new Date(Number(year), Number(month) - 1).toLocaleDateString(locale(), {
     month: 'short',
     year: 'numeric',
   })
