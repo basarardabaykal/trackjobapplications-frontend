@@ -1,8 +1,10 @@
-import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { JobApplication } from '../../types'
 import { STATUS_CONFIG } from '../../constants/applicationStatus'
+import { useEscapeKey } from '../../hooks/useEscapeKey'
+import { useFocusTrap } from '../../hooks/useFocusTrap'
 import StatusBadge from './StatusBadge'
-import { EditIcon, TrashIcon, CloseIcon } from '../icons'
+import { EditIcon, TrashIcon, CloseIcon, CalendarIcon, ClockIcon, LinkIcon } from '../icons'
 import { getAvatarColor } from '../../lib/avatar'
 import { formatLong, formatMedium } from '../../lib/dates'
 
@@ -14,15 +16,10 @@ interface Props {
 }
 
 export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Props) {
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (app) document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [app, onClose])
-
+  const { t } = useTranslation()
   const open = !!app
+  const focusTrapRef = useFocusTrap(open)
+  useEscapeKey(onClose, open)
 
   return (
     <>
@@ -30,20 +27,28 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
       <div
         className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={onClose}
+        aria-hidden="true"
       />
 
       {/* Drawer */}
       <div
+        ref={focusTrapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
         className={`fixed top-0 right-0 h-full w-full max-w-md z-50 bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {!app ? null : (
           <>
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Application Detail</span>
+              <span id="drawer-title" className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                {t('dashboard.drawer.title')}
+              </span>
               <button
                 onClick={onClose}
                 className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                aria-label="Close"
               >
                 <CloseIcon />
               </button>
@@ -65,31 +70,30 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                 </div>
               </div>
 
-              {/* Divider */}
               <div className="border-t border-gray-100" />
 
               {/* Details grid */}
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                    <CalendarIcon />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Applied</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
+                      {t('dashboard.drawer.applied')}
+                    </p>
                     <p className="text-sm text-gray-800">{formatLong(app.applied_date)}</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <ClockIcon />
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Last Updated</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
+                      {t('dashboard.drawer.lastUpdated')}
+                    </p>
                     <p className="text-sm text-gray-800">{formatMedium(app.updated_at)}</p>
                   </div>
                 </div>
@@ -97,12 +101,12 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                 {app.url && (
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
+                      <LinkIcon />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Job Posting</p>
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-0.5">
+                        {t('dashboard.drawer.jobPosting')}
+                      </p>
                       <a
                         href={app.url}
                         target="_blank"
@@ -121,7 +125,9 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                 <>
                   <div className="border-t border-gray-100" />
                   <div>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Notes</p>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                      {t('dashboard.drawer.notes')}
+                    </p>
                     <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{app.notes}</p>
                   </div>
                 </>
@@ -130,15 +136,16 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
               {/* Stage timeline */}
               <div className="border-t border-gray-100" />
               <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Stage</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                  {t('dashboard.drawer.stage')}
+                </p>
                 <div className="flex items-center gap-0">
                   {(['applied', 'interview', 'offer'] as const).map((stage, i) => {
                     const config = STATUS_CONFIG[stage]
                     const stages = ['applied', 'interview', 'offer'] as const
                     const currentIdx = stages.indexOf(app.status as typeof stages[number])
-                    const stageIdx = i
-                    const isActive = stageIdx === currentIdx
-                    const isPast = currentIdx > stageIdx
+                    const isActive = i === currentIdx
+                    const isPast = currentIdx > i
 
                     return (
                       <div key={stage} className="flex items-center flex-1">
@@ -146,7 +153,7 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                           <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                             isActive ? 'bg-blue-600 text-white' : isPast ? 'bg-blue-200 text-blue-700' : 'bg-gray-100 text-gray-400'
                           }`}>
-                            {stageIdx + 1}
+                            {i + 1}
                           </div>
                           <span className={`text-xs mt-1 font-medium ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
                             {config.label}
@@ -169,14 +176,14 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
               >
                 <EditIcon />
-                Edit
+                {t('dashboard.drawer.edit')}
               </button>
               <button
                 onClick={() => { onDelete(app); onClose() }}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition-colors"
               >
                 <TrashIcon />
-                Delete
+                {t('dashboard.drawer.delete')}
               </button>
             </div>
           </>
