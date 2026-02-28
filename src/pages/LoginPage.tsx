@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import SignInForm from '../components/auth/SignInForm'
 import SignUpForm from '../components/auth/SignUpForm'
 import OverlayPanel from '../components/auth/OverlayPanel'
 
 export default function LoginPage() {
+  const { t } = useTranslation()
   const [isSignUp, setIsSignUp] = useState(false)
 
   return (
@@ -38,7 +40,7 @@ export default function LoginPage() {
       </div>
 
       <p className="absolute bottom-6 text-xs text-gray-400">
-        © {new Date().getFullYear()} TrackJobs. All rights reserved.
+        {t('footer.copyright', { year: new Date().getFullYear() })}
       </p>
     </div>
   )

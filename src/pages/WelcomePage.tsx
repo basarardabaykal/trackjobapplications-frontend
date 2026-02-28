@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import LanguageSwitcher from '../components/welcome/LanguageSwitcher'
 import FeatureCard from '../components/welcome/FeatureCard'
+import { BriefcaseIcon, BarChartIcon, ClipboardIcon } from '../components/icons'
 
 export default function WelcomePage() {
   const navigate = useNavigate()
@@ -13,9 +14,7 @@ export default function WelcomePage() {
       <nav className="flex items-center justify-between px-10 py-5">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-md">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
+            <BriefcaseIcon />
           </div>
           <span className="text-lg font-bold text-gray-800 tracking-tight">TrackJobs</span>
         </div>
@@ -75,20 +74,12 @@ export default function WelcomePage() {
         {/* Feature cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-3xl w-full">
           <FeatureCard
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            }
+            icon={<ClipboardIcon />}
             title={t('welcome.features.track.title')}
             description={t('welcome.features.track.description')}
           />
           <FeatureCard
-            icon={
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            }
+            icon={<BarChartIcon />}
             title={t('welcome.features.visualize.title')}
             description={t('welcome.features.visualize.description')}
           />

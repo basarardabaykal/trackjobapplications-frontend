@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { BriefcaseIcon } from '../icons'
 
 interface Props {
   isSignUp: boolean
@@ -21,7 +22,7 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
         <div className="w-1/2 h-full flex flex-col items-center justify-center px-10 bg-gradient-to-br from-blue-700 to-blue-500 text-white relative overflow-hidden">
           <Decoration />
           <div className="relative z-10 text-center">
-            <BriefcaseIcon />
+            <BriefcaseLogo />
             <h3 className="text-3xl font-bold mb-3 tracking-tight">TrackJobs</h3>
             <p className="text-blue-100 text-sm leading-relaxed mb-8 max-w-xs">
               {t('auth.overlay.signInPanel.description')}
@@ -39,7 +40,7 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
         <div className="w-1/2 h-full flex flex-col items-center justify-center px-10 bg-gradient-to-br from-blue-600 to-blue-800 text-white relative overflow-hidden">
           <Decoration />
           <div className="relative z-10 text-center">
-            <BriefcaseIcon />
+            <BriefcaseLogo />
             <h3 className="text-3xl font-bold mb-3 tracking-tight">TrackJobs</h3>
             <p className="text-blue-100 text-sm leading-relaxed mb-8 max-w-xs">
               {t('auth.overlay.signUpPanel.description')}
@@ -57,13 +58,13 @@ export default function OverlayPanel({ isSignUp, onSwitch }: Props) {
   )
 }
 
-function BriefcaseIcon() {
+function BriefcaseLogo() {
   return (
     <div className="flex justify-center mb-6">
       <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
+        <span className="[&_svg]:w-8 [&_svg]:h-8">
+          <BriefcaseIcon />
+        </span>
       </div>
     </div>
   )
