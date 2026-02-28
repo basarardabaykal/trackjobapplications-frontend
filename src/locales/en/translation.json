@@ -39,13 +39,20 @@
     "signUp": {
       "title": "Create Account",
       "subtitle": "Start tracking your job applications today.",
-      "fullName": "Full name",
+      "firstName": "First name",
+      "lastName": "Last name",
       "email": "Email address",
       "password": "Password",
+      "confirmPassword": "Confirm password",
       "submit": "SIGN UP",
       "or": "or",
       "hasAccount": "Already have an account?",
       "switchToSignIn": "Sign In"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password.",
+      "registrationFailed": "Registration failed. Please try again.",
+      "passwordMismatch": "Passwords do not match."
     },
     "overlay": {
       "signInPanel": {
