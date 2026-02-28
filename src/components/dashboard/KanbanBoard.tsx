@@ -1,7 +1,10 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { JobApplication, ApplicationStatus } from '../../types'
-import { STATUS_CONFIG } from '../../constants/applicationStatus'
+import { STATUS_CONFIG, STATUS_COLORS } from '../../constants/applicationStatus'
 import { EditIcon, TrashIcon } from '../icons'
+import { getAvatarColor } from '../../lib/avatar'
+import { formatShort } from '../../lib/dates'
 
 interface Props {
   applications: JobApplication[]
@@ -12,36 +15,6 @@ interface Props {
 }
 
 const COLUMNS: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejected', 'withdrawn']
-
-const AVATAR_COLORS = [
-  'bg-violet-100 text-violet-700',
-  'bg-blue-100 text-blue-700',
-  'bg-emerald-100 text-emerald-700',
-  'bg-amber-100 text-amber-700',
-  'bg-rose-100 text-rose-700',
-  'bg-cyan-100 text-cyan-700',
-  'bg-orange-100 text-orange-700',
-  'bg-indigo-100 text-indigo-700',
-]
-
-function getAvatarColor(name: string) {
-  return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
-const COLUMN_ACCENT: Record<ApplicationStatus, string> = {
-  applied: 'bg-blue-500',
-  interview: 'bg-amber-400',
-  offer: 'bg-emerald-500',
-  rejected: 'bg-red-400',
-  withdrawn: 'bg-gray-300',
-}
 
 interface CardProps {
   app: JobApplication
@@ -97,15 +70,26 @@ function KanbanCard({ app, onView, onEdit, onDelete, onDragStart, onDragEnd, isD
         <p className="text-xs text-gray-400 italic mb-3 truncate">{app.notes}</p>
       )}
 
-      <p className="text-xs text-gray-400">{formatDate(app.applied_date)}</p>
+      <p className="text-xs text-gray-400">{formatShort(app.applied_date)}</p>
     </div>
   )
 }
 
 export default function KanbanBoard({ applications, onView, onEdit, onDelete, onStatusChange }: Props) {
+  const { t } = useTranslation()
   const draggedId = useRef<number | null>(null)
   const [draggingId, setDraggingId] = useState<number | null>(null)
   const [dragOverCol, setDragOverCol] = useState<ApplicationStatus | null>(null)
+
+  const grouped = useMemo(() => {
+    const map: Record<ApplicationStatus, JobApplication[]> = {
+      applied: [], interview: [], offer: [], rejected: [], withdrawn: [],
+    }
+    for (const app of applications) {
+      map[app.status].push(app)
+    }
+    return map
+  }, [applications])
 
   function handleDragStart(id: number) {
     draggedId.current = id
@@ -138,7 +122,7 @@ export default function KanbanBoard({ applications, onView, onEdit, onDelete, on
   return (
     <div className="flex gap-4 overflow-x-auto pb-4">
       {COLUMNS.map(status => {
-        const colApps = applications.filter(a => a.status === status)
+        const colApps = grouped[status]
         const config = STATUS_CONFIG[status]
         const isOver = dragOverCol === status
 
@@ -152,7 +136,7 @@ export default function KanbanBoard({ applications, onView, onEdit, onDelete, on
           >
             {/* Column header */}
             <div className="flex items-center gap-2 mb-3">
-              <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${COLUMN_ACCENT[status]}`} />
+              <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${STATUS_COLORS[status]}`} />
               <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                 {config.label}
               </span>
@@ -169,7 +153,7 @@ export default function KanbanBoard({ applications, onView, onEdit, onDelete, on
             >
               {colApps.length === 0 && !isOver ? (
                 <div className="rounded-xl border-2 border-dashed border-gray-100 py-8 text-center">
-                  <p className="text-xs text-gray-300">No applications</p>
+                  <p className="text-xs text-gray-300">{t('dashboard.kanban.noApplications')}</p>
                 </div>
               ) : (
                 colApps.map(app => (

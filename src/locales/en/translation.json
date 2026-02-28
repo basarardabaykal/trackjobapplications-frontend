@@ -58,6 +58,95 @@
       }
     }
   },
+  "dashboard": {
+    "title": "Applications",
+    "addApplication": "Add Application",
+    "editApplication": "Edit Application",
+    "stats": {
+      "total": "Total",
+      "applied": "Applied",
+      "interview": "Interview",
+      "offer": "Offer",
+      "rejected": "Rejected",
+      "active": "Active"
+    },
+    "status": {
+      "applied": "Applied",
+      "interview": "Interview",
+      "offer": "Offer",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn",
+      "all": "All"
+    },
+    "table": {
+      "company": "Company",
+      "status": "Status",
+      "applied": "Applied",
+      "emptyTitle": "No applications yet",
+      "emptySubtitle": "Add your first job application to get started."
+    },
+    "filters": {
+      "searchPlaceholder": "Search company or position...",
+      "sort": "Sort:",
+      "sortDate": "Date",
+      "sortCompany": "Company",
+      "sortStatus": "Status"
+    },
+    "form": {
+      "company": "Company",
+      "companyPlaceholder": "e.g. Stripe",
+      "position": "Position",
+      "positionPlaceholder": "e.g. Senior Frontend Engineer",
+      "status": "Status",
+      "appliedDate": "Applied Date",
+      "jobUrl": "Job URL",
+      "jobUrlPlaceholder": "https://company.com/jobs/...",
+      "notes": "Notes",
+      "notesPlaceholder": "Interview notes, questions, links...",
+      "cancel": "Cancel",
+      "saveApplication": "Save Application",
+      "saveChanges": "Save Changes",
+      "companyRequired": "Company is required",
+      "positionRequired": "Position is required",
+      "dateRequired": "Date is required"
+    },
+    "drawer": {
+      "title": "Application Detail",
+      "applied": "Applied",
+      "lastUpdated": "Last Updated",
+      "jobPosting": "Job Posting",
+      "notes": "Notes",
+      "stage": "Stage",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "confirm": {
+      "deleteTitle": "Delete application",
+      "deleteDescription": "Remove {{company}} — {{position}}? This cannot be undone.",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "kanban": {
+      "noApplications": "No applications"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "analytics": "Analytics",
+      "signOut": "Sign Out"
+    }
+  },
+  "analytics": {
+    "title": "Analytics",
+    "totalApplications": "Total Applications",
+    "interviewRate": "Interview Rate",
+    "offerRate": "Offer Rate",
+    "active": "Active",
+    "statusDistribution": "Status Distribution",
+    "applicationsPerMonth": "Applications per Month",
+    "noData": "No data yet",
+    "pipeline": "Application Pipeline",
+    "conversion": "% conversion"
+  },
   "footer": {
     "rights": "All rights reserved."
   }

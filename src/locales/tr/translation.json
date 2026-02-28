@@ -58,6 +58,95 @@
       }
     }
   },
+  "dashboard": {
+    "title": "Başvurular",
+    "addApplication": "Başvuru Ekle",
+    "editApplication": "Başvuruyu Düzenle",
+    "stats": {
+      "total": "Toplam",
+      "applied": "Başvuruldu",
+      "interview": "Mülakat",
+      "offer": "Teklif",
+      "rejected": "Reddedildi",
+      "active": "Aktif"
+    },
+    "status": {
+      "applied": "Başvuruldu",
+      "interview": "Mülakat",
+      "offer": "Teklif",
+      "rejected": "Reddedildi",
+      "withdrawn": "Geri Çekildi",
+      "all": "Tümü"
+    },
+    "table": {
+      "company": "Şirket",
+      "status": "Durum",
+      "applied": "Başvuru Tarihi",
+      "emptyTitle": "Henüz başvuru yok",
+      "emptySubtitle": "İlk iş başvurunu ekleyerek başla."
+    },
+    "filters": {
+      "searchPlaceholder": "Şirket veya pozisyon ara...",
+      "sort": "Sırala:",
+      "sortDate": "Tarih",
+      "sortCompany": "Şirket",
+      "sortStatus": "Durum"
+    },
+    "form": {
+      "company": "Şirket",
+      "companyPlaceholder": "örn. Stripe",
+      "position": "Pozisyon",
+      "positionPlaceholder": "örn. Kıdemli Frontend Mühendisi",
+      "status": "Durum",
+      "appliedDate": "Başvuru Tarihi",
+      "jobUrl": "İş İlanı URL",
+      "jobUrlPlaceholder": "https://sirket.com/ilan/...",
+      "notes": "Notlar",
+      "notesPlaceholder": "Mülakat notları, sorular, bağlantılar...",
+      "cancel": "Vazgeç",
+      "saveApplication": "Başvuruyu Kaydet",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "companyRequired": "Şirket zorunludur",
+      "positionRequired": "Pozisyon zorunludur",
+      "dateRequired": "Tarih zorunludur"
+    },
+    "drawer": {
+      "title": "Başvuru Detayı",
+      "applied": "Başvuru Tarihi",
+      "lastUpdated": "Son Güncelleme",
+      "jobPosting": "İş İlanı",
+      "notes": "Notlar",
+      "stage": "Aşama",
+      "edit": "Düzenle",
+      "delete": "Sil"
+    },
+    "confirm": {
+      "deleteTitle": "Başvuruyu sil",
+      "deleteDescription": "{{company}} — {{position}} başvurusunu sil? Bu işlem geri alınamaz.",
+      "delete": "Sil",
+      "cancel": "Vazgeç"
+    },
+    "kanban": {
+      "noApplications": "Başvuru yok"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "analytics": "Analitik",
+      "signOut": "Çıkış Yap"
+    }
+  },
+  "analytics": {
+    "title": "Analitik",
+    "totalApplications": "Toplam Başvuru",
+    "interviewRate": "Mülakat Oranı",
+    "offerRate": "Teklif Oranı",
+    "active": "Aktif",
+    "statusDistribution": "Durum Dağılımı",
+    "applicationsPerMonth": "Aylık Başvurular",
+    "noData": "Henüz veri yok",
+    "pipeline": "Başvuru Hattı",
+    "conversion": "% dönüşüm"
+  },
   "footer": {
     "rights": "Tüm hakları saklıdır."
   }

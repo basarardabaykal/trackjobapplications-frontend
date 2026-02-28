@@ -1,6 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ApplicationStatus, JobApplication } from '../../types'
 import { STATUS_OPTIONS } from '../../constants/applicationStatus'
+import { useEscapeKey } from '../../hooks/useEscapeKey'
+import { useFocusTrap } from '../../hooks/useFocusTrap'
+import { CloseIcon } from '../icons'
+import Button from '../ui/Button'
 
 interface FormData {
   company: string
@@ -18,13 +23,15 @@ interface Props {
   initialData?: JobApplication
 }
 
-const INITIAL_FORM: FormData = {
-  company: '',
-  position: '',
-  status: 'applied',
-  applied_date: new Date().toISOString().split('T')[0],
-  url: '',
-  notes: '',
+function getInitialForm(): FormData {
+  return {
+    company: '',
+    position: '',
+    status: 'applied',
+    applied_date: new Date().toISOString().split('T')[0],
+    url: '',
+    notes: '',
+  }
 }
 
 function toFormData(app: JobApplication): FormData {
@@ -39,32 +46,27 @@ function toFormData(app: JobApplication): FormData {
 }
 
 export default function AddApplicationModal({ open, onClose, onSubmit, initialData }: Props) {
+  const { t } = useTranslation()
   const isEdit = !!initialData
-  const [form, setForm] = useState<FormData>(INITIAL_FORM)
+  const [form, setForm] = useState<FormData>(getInitialForm)
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const firstInputRef = useRef<HTMLInputElement>(null)
+  const focusTrapRef = useFocusTrap(open, firstInputRef)
+
+  useEscapeKey(onClose, open)
 
   useEffect(() => {
     if (open) {
-      setForm(initialData ? toFormData(initialData) : INITIAL_FORM)
+      setForm(initialData ? toFormData(initialData) : getInitialForm())
       setErrors({})
-      setTimeout(() => firstInputRef.current?.focus(), 50)
     }
   }, [open, initialData])
 
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    if (open) document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [open, onClose])
-
   function validate(): boolean {
     const next: Partial<FormData> = {}
-    if (!form.company.trim()) next.company = 'Company is required'
-    if (!form.position.trim()) next.position = 'Position is required'
-    if (!form.applied_date) next.applied_date = 'Date is required'
+    if (!form.company.trim()) next.company = t('dashboard.form.companyRequired')
+    if (!form.position.trim()) next.position = t('dashboard.form.positionRequired')
+    if (!form.applied_date) next.applied_date = t('dashboard.form.dateRequired')
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -87,20 +89,25 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
 
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+      <div
+        ref={focusTrapRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden"
+      >
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">
-            {isEdit ? 'Edit Application' : 'Add Application'}
+          <h2 id="modal-title" className="text-base font-semibold text-gray-900">
+            {isEdit ? t('dashboard.editApplication') : t('dashboard.addApplication')}
           </h2>
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            aria-label="Close"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <CloseIcon />
           </button>
         </div>
 
@@ -108,12 +115,12 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
           <div className="px-6 py-5 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Company <span className="text-red-400">*</span>
+                {t('dashboard.form.company')} <span className="text-red-400">*</span>
               </label>
               <input
                 ref={firstInputRef}
                 type="text"
-                placeholder="e.g. Stripe"
+                placeholder={t('dashboard.form.companyPlaceholder')}
                 value={form.company}
                 onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm outline-none transition-colors placeholder:text-gray-300 ${
@@ -127,11 +134,11 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                Position <span className="text-red-400">*</span>
+                {t('dashboard.form.position')} <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
-                placeholder="e.g. Senior Frontend Engineer"
+                placeholder={t('dashboard.form.positionPlaceholder')}
                 value={form.position}
                 onChange={e => setForm(f => ({ ...f, position: e.target.value }))}
                 className={`w-full px-3.5 py-2.5 rounded-xl border text-sm outline-none transition-colors placeholder:text-gray-300 ${
@@ -145,7 +152,7 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('dashboard.form.status')}</label>
                 <select
                   value={form.status}
                   onChange={e => setForm(f => ({ ...f, status: e.target.value as ApplicationStatus }))}
@@ -159,7 +166,7 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Applied Date <span className="text-red-400">*</span>
+                  {t('dashboard.form.appliedDate')} <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="date"
@@ -176,10 +183,10 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Job URL</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('dashboard.form.jobUrl')}</label>
               <input
                 type="url"
-                placeholder="https://company.com/jobs/..."
+                placeholder={t('dashboard.form.jobUrlPlaceholder')}
                 value={form.url}
                 onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors placeholder:text-gray-300"
@@ -187,9 +194,9 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Notes</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('dashboard.form.notes')}</label>
               <textarea
-                placeholder="Interview notes, questions, links..."
+                placeholder={t('dashboard.form.notesPlaceholder')}
                 value={form.notes}
                 onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
                 rows={3}
@@ -199,19 +206,12 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
           </div>
 
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-md hover:shadow-blue-200 transition-all duration-200"
-            >
-              {isEdit ? 'Save Changes' : 'Save Application'}
-            </button>
+            <Button type="button" variant="secondary" onClick={onClose}>
+              {t('dashboard.form.cancel')}
+            </Button>
+            <Button type="submit" variant="primary">
+              {isEdit ? t('dashboard.form.saveChanges') : t('dashboard.form.saveApplication')}
+            </Button>
           </div>
         </form>
       </div>
