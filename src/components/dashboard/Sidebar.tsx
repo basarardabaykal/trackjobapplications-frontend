@@ -1,11 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { logout } from '../../services/auth'
+import { useAuth } from '../../context/AuthContext'
 import { HomeIcon, BarChartIcon, SignOutIcon, BriefcaseIcon } from '../icons'
 
 export default function Sidebar() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const NAV_ITEMS = [
     { label: t('dashboard.nav.dashboard'), to: '/dashboard', icon: <HomeIcon /> },
@@ -14,7 +15,6 @@ export default function Sidebar() {
 
   function handleSignOut() {
     logout()
-    navigate('/login')
   }
 
   return (
