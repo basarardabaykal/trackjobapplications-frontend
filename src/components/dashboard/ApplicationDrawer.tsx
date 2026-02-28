@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { JobApplication } from '../../types'
-import { STATUS_CONFIG } from '../../constants/applicationStatus'
+
 import { useEscapeKey } from '../../hooks/useEscapeKey'
 import { useFocusTrap } from '../../hooks/useFocusTrap'
 import StatusBadge from './StatusBadge'
@@ -141,7 +141,6 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                 </p>
                 <div className="flex items-center gap-0">
                   {(['applied', 'interview', 'offer'] as const).map((stage, i) => {
-                    const config = STATUS_CONFIG[stage]
                     const stages = ['applied', 'interview', 'offer'] as const
                     const currentIdx = stages.indexOf(app.status as typeof stages[number])
                     const isActive = i === currentIdx
@@ -156,7 +155,7 @@ export default function ApplicationDrawer({ app, onClose, onEdit, onDelete }: Pr
                             {i + 1}
                           </div>
                           <span className={`text-xs mt-1 font-medium ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
-                            {config.label}
+                            {t(`dashboard.status.${stage}`)}
                           </span>
                         </div>
                         {i < 2 && (

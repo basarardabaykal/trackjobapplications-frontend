@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ApplicationStatus, JobApplication } from '../../types'
-import { STATUS_OPTIONS } from '../../constants/applicationStatus'
+import { STATUS_KEYS } from '../../constants/applicationStatus'
 import { useEscapeKey } from '../../hooks/useEscapeKey'
 import { useFocusTrap } from '../../hooks/useFocusTrap'
 import { CloseIcon } from '../icons'
@@ -158,8 +158,8 @@ export default function AddApplicationModal({ open, onClose, onSubmit, initialDa
                   onChange={e => setForm(f => ({ ...f, status: e.target.value as ApplicationStatus }))}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors bg-white"
                 >
-                  {STATUS_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  {STATUS_KEYS.map(status => (
+                    <option key={status} value={status}>{t(`dashboard.status.${status}`)}</option>
                   ))}
                 </select>
               </div>

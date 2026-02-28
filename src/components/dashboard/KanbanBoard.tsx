@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { JobApplication, ApplicationStatus } from '../../types'
-import { STATUS_CONFIG, STATUS_COLORS } from '../../constants/applicationStatus'
+import { STATUS_COLORS } from '../../constants/applicationStatus'
 import { EditIcon, TrashIcon } from '../icons'
 import { getAvatarColor } from '../../lib/avatar'
 import { formatShort } from '../../lib/dates'
@@ -123,7 +123,6 @@ export default function KanbanBoard({ applications, onView, onEdit, onDelete, on
     <div className="flex gap-4 overflow-x-auto pb-4">
       {COLUMNS.map(status => {
         const colApps = grouped[status]
-        const config = STATUS_CONFIG[status]
         const isOver = dragOverCol === status
 
         return (
@@ -138,7 +137,7 @@ export default function KanbanBoard({ applications, onView, onEdit, onDelete, on
             <div className="flex items-center gap-2 mb-3">
               <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${STATUS_COLORS[status]}`} />
               <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                {config.label}
+                {t(`dashboard.status.${status}`)}
               </span>
               <span className="ml-auto text-xs font-semibold text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
                 {colApps.length}
