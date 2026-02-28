@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { UserIcon, MailIcon, LockIcon, EyeIcon } from '../icons'
+import { useAuth } from '../../context/AuthContext'
+import { useToast } from '../../context/ToastContext'
 
 interface Props {
   onSwitch: () => void
@@ -10,14 +12,31 @@ interface Props {
 export default function SignUpForm({ onSwitch }: Props) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const [fullName, setFullName] = useState('')
+  const { register } = useAuth()
+  const { addToast } = useToast()
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [password2, setPassword2] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    navigate('/dashboard')
+    if (password !== password2) {
+      addToast(t('auth.errors.passwordMismatch'), 'error')
+      return
+    }
+    setIsLoading(true)
+    try {
+      await register(email, firstName, lastName, password, password2)
+      navigate('/dashboard')
+    } catch {
+      addToast(t('auth.errors.registrationFailed'), 'error')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -26,16 +45,28 @@ export default function SignUpForm({ onSwitch }: Props) {
       <p className="text-sm text-gray-400 mb-8">{t('auth.signUp.subtitle')}</p>
 
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
-        <div className="relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2"><UserIcon /></span>
-          <input
-            type="text"
-            placeholder={t('auth.signUp.fullName')}
-            autoComplete="name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
-          />
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2"><UserIcon /></span>
+            <input
+              type="text"
+              placeholder={t('auth.signUp.firstName')}
+              autoComplete="given-name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
+            />
+          </div>
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder={t('auth.signUp.lastName')}
+              autoComplete="family-name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full px-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
+            />
+          </div>
         </div>
 
         <div className="relative">
@@ -69,11 +100,24 @@ export default function SignUpForm({ onSwitch }: Props) {
           </button>
         </div>
 
+        <div className="relative">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2"><LockIcon /></span>
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder={t('auth.signUp.confirmPassword')}
+            autoComplete="new-password"
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white transition-all"
+          />
+        </div>
+
         <button
           type="submit"
-          className="w-full py-3 rounded-xl text-sm font-semibold text-white tracking-wide bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all duration-200"
+          disabled={isLoading}
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white tracking-wide bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {t('auth.signUp.submit')}
+          {isLoading ? '...' : t('auth.signUp.submit')}
         </button>
 
         <div className="flex items-center gap-3 py-1">
