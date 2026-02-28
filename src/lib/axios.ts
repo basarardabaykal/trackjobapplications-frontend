@@ -1,16 +1,19 @@
 import axios from 'axios'
+import { getAccessToken, getRefreshToken, saveTokens, clearTokens } from '../services/auth'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api',
 })
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token')
+  const token = getAccessToken()
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
 })
+
+let refreshPromise: Promise<string> | null = null
 
 api.interceptors.response.use(
   (response) => response,
@@ -18,20 +21,27 @@ api.interceptors.response.use(
     const original = error.config
     if (error.response?.status === 401 && !original._retry) {
       original._retry = true
-      const refresh = localStorage.getItem('refresh_token')
+      const refresh = getRefreshToken()
       if (refresh) {
         try {
-          const { data } = await axios.post(
-            `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/token/refresh/`,
-            { refresh },
-          )
-          localStorage.setItem('access_token', data.access)
-          original.headers.Authorization = `Bearer ${data.access}`
+          if (!refreshPromise) {
+            refreshPromise = axios
+              .post(
+                `${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/auth/token/refresh/`,
+                { refresh },
+              )
+              .then(({ data }) => {
+                saveTokens({ access: data.access, refresh })
+                return data.access as string
+              })
+              .finally(() => { refreshPromise = null })
+          }
+          const newAccess = await refreshPromise
+          original.headers.Authorization = `Bearer ${newAccess}`
           return api(original)
         } catch {
-          localStorage.removeItem('access_token')
-          localStorage.removeItem('refresh_token')
-          window.location.href = '/login'
+          clearTokens()
+          window.dispatchEvent(new CustomEvent('auth:logout'))
         }
       }
     }

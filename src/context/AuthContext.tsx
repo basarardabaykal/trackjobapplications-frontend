@@ -26,6 +26,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  useEffect(() => {
+    function handleForceLogout() {
+      setUser(null)
+      navigate('/login')
+    }
+    window.addEventListener('auth:logout', handleForceLogout)
+    return () => window.removeEventListener('auth:logout', handleForceLogout)
+  }, [navigate])
+
   const login = useCallback(async (email: string, password: string) => {
     await auth.login(email, password)
     const me = await auth.fetchMe()
