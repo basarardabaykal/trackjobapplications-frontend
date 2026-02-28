@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { MailIcon, LockIcon, EyeIcon } from '../icons'
+import { useAuth } from '../../context/AuthContext'
+import { useToast } from '../../context/ToastContext'
 
 interface Props {
   onSwitch: () => void
@@ -10,13 +12,24 @@ interface Props {
 export default function SignInForm({ onSwitch }: Props) {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { login } = useAuth()
+  const { addToast } = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    navigate('/dashboard')
+    setIsLoading(true)
+    try {
+      await login(email, password)
+      navigate('/dashboard')
+    } catch {
+      addToast(t('auth.errors.invalidCredentials'), 'error')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -64,9 +77,10 @@ export default function SignInForm({ onSwitch }: Props) {
 
         <button
           type="submit"
-          className="w-full py-3 rounded-xl text-sm font-semibold text-white tracking-wide bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all duration-200"
+          disabled={isLoading}
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white tracking-wide bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {t('auth.signIn.submit')}
+          {isLoading ? '...' : t('auth.signIn.submit')}
         </button>
 
         <div className="flex items-center gap-3 py-1">
