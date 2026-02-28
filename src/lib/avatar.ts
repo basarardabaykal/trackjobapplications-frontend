@@ -1,4 +1,4 @@
-export const AVATAR_COLORS = [
+const AVATAR_COLORS = [
   'bg-violet-100 text-violet-700',
   'bg-blue-100 text-blue-700',
   'bg-emerald-100 text-emerald-700',
