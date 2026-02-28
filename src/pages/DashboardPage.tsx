@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '../components/layout/DashboardLayout'
 import Header from '../components/dashboard/Header'
@@ -11,7 +11,7 @@ import TableFilters from '../components/dashboard/TableFilters'
 import ApplicationDrawer from '../components/dashboard/ApplicationDrawer'
 import Button from '../components/ui/Button'
 import { PlusIcon, TableIcon, KanbanIcon } from '../components/icons'
-import { MOCK_APPLICATIONS } from '../data/mockApplications'
+import { getApplications, createApplication, updateApplication, deleteApplication } from '../services/applications'
 import { ApplicationStatus, JobApplication, ViewMode } from '../types'
 import { useToast } from '../context/ToastContext'
 import { useApplicationFilters } from '../hooks/useApplicationFilters'
@@ -19,7 +19,7 @@ import { useApplicationFilters } from '../hooks/useApplicationFilters'
 export default function DashboardPage() {
   const { t } = useTranslation()
   const { addToast } = useToast()
-  const [apps, setApps] = useState<JobApplication[]>(MOCK_APPLICATIONS)
+  const [apps, setApps] = useState<JobApplication[]>([])
 
   const [view, setView] = useState<ViewMode>('table')
   const [drawerApp, setDrawerApp] = useState<JobApplication | null>(null)
@@ -30,6 +30,12 @@ export default function DashboardPage() {
   const { search, setSearch, statusFilter, setStatusFilter, sortKey, sortDir, handleSortChange, filtered } =
     useApplicationFilters(apps)
 
+  useEffect(() => {
+    getApplications()
+      .then(setApps)
+      .catch(() => addToast(t('dashboard.errors.loadFailed'), 'error'))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const stats = useMemo(() => ({
     total: apps.length,
     applied: apps.filter(a => a.status === 'applied').length,
@@ -38,34 +44,47 @@ export default function DashboardPage() {
     rejected: apps.filter(a => a.status === 'rejected').length,
   }), [apps])
 
-  function handleAdd(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
-    const now = new Date().toISOString()
-    setApps(prev => [{ ...data, id: Date.now(), created_at: now, updated_at: now }, ...prev])
-    addToast('Application added')
+  async function handleAdd(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
+    try {
+      const created = await createApplication(data)
+      setApps(prev => [created, ...prev])
+      addToast(t('dashboard.toast.added'))
+    } catch {
+      addToast(t('dashboard.errors.addFailed'), 'error')
+    }
   }
 
-  function handleEdit(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
+  async function handleEdit(data: Omit<JobApplication, 'id' | 'created_at' | 'updated_at'>) {
     if (!editTarget) return
-    setApps(prev =>
-      prev.map(a =>
-        a.id === editTarget.id ? { ...a, ...data, updated_at: new Date().toISOString() } : a,
-      ),
-    )
-    addToast('Changes saved')
+    try {
+      const updated = await updateApplication(editTarget.id, data)
+      setApps(prev => prev.map(a => (a.id === editTarget.id ? updated : a)))
+      addToast(t('dashboard.toast.saved'))
+    } catch {
+      addToast(t('dashboard.errors.editFailed'), 'error')
+    }
   }
 
-  function handleStatusChange(id: number, newStatus: ApplicationStatus) {
-    setApps(prev =>
-      prev.map(a => (a.id === id ? { ...a, status: newStatus, updated_at: new Date().toISOString() } : a)),
-    )
-    addToast('Status updated')
+  async function handleStatusChange(id: number, newStatus: ApplicationStatus) {
+    try {
+      const updated = await updateApplication(id, { status: newStatus })
+      setApps(prev => prev.map(a => (a.id === id ? updated : a)))
+      addToast(t('dashboard.toast.statusUpdated'))
+    } catch {
+      addToast(t('dashboard.errors.editFailed'), 'error')
+    }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!deleteTarget) return
-    setApps(prev => prev.filter(a => a.id !== deleteTarget.id))
-    setDeleteTarget(null)
-    addToast('Application deleted', 'error')
+    try {
+      await deleteApplication(deleteTarget.id)
+      setApps(prev => prev.filter(a => a.id !== deleteTarget.id))
+      setDeleteTarget(null)
+      addToast(t('dashboard.toast.deleted'))
+    } catch {
+      addToast(t('dashboard.errors.deleteFailed'), 'error')
+    }
   }
 
   return (
