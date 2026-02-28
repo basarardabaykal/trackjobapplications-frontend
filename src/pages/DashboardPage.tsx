@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '../components/layout/DashboardLayout'
 import Header from '../components/dashboard/Header'
@@ -34,7 +34,7 @@ export default function DashboardPage() {
     getApplications()
       .then(setApps)
       .catch(() => addToast(t('dashboard.errors.loadFailed'), 'error'))
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [addToast, t])
 
   const stats = useMemo(() => ({
     total: apps.length,
@@ -97,14 +97,16 @@ export default function DashboardPage() {
               <button
                 onClick={() => setView('table')}
                 className={`p-1.5 rounded-lg transition-colors ${view === 'table' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                title="Table view"
+                aria-label={t('dashboard.viewTable')}
+                aria-pressed={view === 'table'}
               >
                 <TableIcon />
               </button>
               <button
                 onClick={() => setView('kanban')}
                 className={`p-1.5 rounded-lg transition-colors ${view === 'kanban' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
-                title="Kanban view"
+                aria-label={t('dashboard.viewKanban')}
+                aria-pressed={view === 'kanban'}
               >
                 <KanbanIcon />
               </button>
@@ -139,16 +141,16 @@ export default function DashboardPage() {
       {view === 'table' ? (
         <ApplicationsTable
           applications={filtered}
-          onView={app => setDrawerApp(app)}
-          onEdit={app => setEditTarget(app)}
-          onDelete={app => setDeleteTarget(app)}
+          onView={setDrawerApp}
+          onEdit={setEditTarget}
+          onDelete={setDeleteTarget}
         />
       ) : (
         <KanbanBoard
           applications={filtered}
-          onView={app => setDrawerApp(app)}
-          onEdit={app => setEditTarget(app)}
-          onDelete={app => setDeleteTarget(app)}
+          onView={setDrawerApp}
+          onEdit={setEditTarget}
+          onDelete={setDeleteTarget}
           onStatusChange={handleStatusChange}
         />
       )}
