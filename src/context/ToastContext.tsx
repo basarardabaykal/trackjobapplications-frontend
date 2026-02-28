@@ -63,15 +63,25 @@ function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
   const counter = useRef(0)
+  const timers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map())
 
   const dismiss = useCallback((id: number) => {
+    const timer = timers.current.get(id)
+    if (timer) {
+      clearTimeout(timer)
+      timers.current.delete(id)
+    }
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
   const addToast = useCallback((message: string, type: ToastType = 'success') => {
     const id = ++counter.current
     setToasts(prev => [...prev, { id, message, type }])
-    setTimeout(() => dismiss(id), 3000)
+    const timer = setTimeout(() => {
+      timers.current.delete(id)
+      dismiss(id)
+    }, 3000)
+    timers.current.set(id, timer)
   }, [dismiss])
 
   return (
