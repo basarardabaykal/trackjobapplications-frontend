@@ -152,6 +152,14 @@
       "dashboard": "Dashboard",
       "analytics": "Analitik",
       "signOut": "Çıkış Yap"
+    },
+    "viewTable": "Tablo görünümü",
+    "viewKanban": "Kanban görünümü",
+    "aria": {
+      "edit": "Başvuruyu düzenle",
+      "delete": "Başvuruyu sil",
+      "togglePassword": "Şifre görünürlüğünü değiştir",
+      "changeLanguage": "Dil değiştir"
     }
   },
   "analytics": {
@@ -167,6 +175,7 @@
     "conversion": "% dönüşüm"
   },
   "footer": {
-    "rights": "Tüm hakları saklıdır."
+    "rights": "Tüm hakları saklıdır.",
+    "copyright": "© {{year}} TrackJobs. Tüm hakları saklıdır."
   }
 }

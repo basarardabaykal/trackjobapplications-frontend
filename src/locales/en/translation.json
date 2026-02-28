@@ -152,6 +152,14 @@
       "dashboard": "Dashboard",
       "analytics": "Analytics",
       "signOut": "Sign Out"
+    },
+    "viewTable": "Table view",
+    "viewKanban": "Kanban view",
+    "aria": {
+      "edit": "Edit application",
+      "delete": "Delete application",
+      "togglePassword": "Toggle password visibility",
+      "changeLanguage": "Change language"
     }
   },
   "analytics": {
@@ -167,6 +175,7 @@
     "conversion": "% conversion"
   },
   "footer": {
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "copyright": "© {{year}} TrackJobs. All rights reserved."
   }
 }
