@@ -39,13 +39,20 @@
     "signUp": {
       "title": "Hesap Oluştur",
       "subtitle": "Hemen kaydol, başvurularını takip etmeye başla.",
-      "fullName": "Ad Soyad",
+      "firstName": "Ad",
+      "lastName": "Soyad",
       "email": "E-posta adresi",
       "password": "Şifre",
+      "confirmPassword": "Şifre tekrarı",
       "submit": "KAYIT OL",
       "or": "veya",
       "hasAccount": "Zaten hesabın var mı?",
       "switchToSignIn": "Giriş Yap"
+    },
+    "errors": {
+      "invalidCredentials": "Geçersiz e-posta veya şifre.",
+      "registrationFailed": "Kayıt başarısız. Lütfen tekrar deneyin.",
+      "passwordMismatch": "Şifreler eşleşmiyor."
     },
     "overlay": {
       "signInPanel": {
