@@ -1,9 +1,10 @@
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '../components/layout/DashboardLayout'
 import Header from '../components/dashboard/Header'
 import StatCard from '../components/dashboard/StatCard'
-import { MOCK_APPLICATIONS } from '../data/mockApplications'
-import { ApplicationStatus } from '../types'
+import { getApplications } from '../services/applications'
+import { ApplicationStatus, JobApplication } from '../types'
 import { STATUS_COLORS, STATUS_TEXT, STATUS_BG } from '../constants/applicationStatus'
 import { formatMonthYear } from '../lib/dates'
 import { ChevronRightIcon } from '../components/icons'
@@ -12,7 +13,11 @@ const STATUSES: ApplicationStatus[] = ['applied', 'interview', 'offer', 'rejecte
 
 export default function AnalyticsPage() {
   const { t } = useTranslation()
-  const apps = MOCK_APPLICATIONS
+  const [apps, setApps] = useState<JobApplication[]>([])
+
+  useEffect(() => {
+    getApplications().then(setApps).catch(() => {})
+  }, [])
 
   const counts: Record<ApplicationStatus, number> = {
     applied: 0, interview: 0, offer: 0, rejected: 0, withdrawn: 0,

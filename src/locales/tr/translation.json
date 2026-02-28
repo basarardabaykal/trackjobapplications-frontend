@@ -136,6 +136,18 @@
     "kanban": {
       "noApplications": "Başvuru yok"
     },
+    "toast": {
+      "added": "Başvuru eklendi",
+      "saved": "Değişiklikler kaydedildi",
+      "statusUpdated": "Durum güncellendi",
+      "deleted": "Başvuru silindi"
+    },
+    "errors": {
+      "loadFailed": "Başvurular yüklenemedi.",
+      "addFailed": "Başvuru eklenemedi.",
+      "editFailed": "Değişiklikler kaydedilemedi.",
+      "deleteFailed": "Başvuru silinemedi."
+    },
     "nav": {
       "dashboard": "Dashboard",
       "analytics": "Analitik",

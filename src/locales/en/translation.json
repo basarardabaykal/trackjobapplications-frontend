@@ -136,6 +136,18 @@
     "kanban": {
       "noApplications": "No applications"
     },
+    "toast": {
+      "added": "Application added",
+      "saved": "Changes saved",
+      "statusUpdated": "Status updated",
+      "deleted": "Application deleted"
+    },
+    "errors": {
+      "loadFailed": "Failed to load applications.",
+      "addFailed": "Failed to add application.",
+      "editFailed": "Failed to save changes.",
+      "deleteFailed": "Failed to delete application."
+    },
     "nav": {
       "dashboard": "Dashboard",
       "analytics": "Analytics",
