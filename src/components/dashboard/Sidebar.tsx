@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { HomeIcon, BarChartIcon, SignOutIcon, BriefcaseIcon } from '../icons'
 
 export default function Sidebar() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const { user, logout } = useAuth()
 
   const NAV_ITEMS = [
@@ -13,22 +12,18 @@ export default function Sidebar() {
     { label: t('dashboard.nav.analytics'), to: '/analytics', icon: <BarChartIcon /> },
   ]
 
-  function handleSignOut() {
-    logout()
-  }
-
   return (
     <aside className="w-60 min-h-screen bg-white border-r border-gray-100 flex flex-col">
       {/* Logo */}
-      <div
-        className="flex items-center gap-2.5 px-6 py-5 cursor-pointer"
-        onClick={() => navigate('/')}
+      <Link
+        to="/"
+        className="flex items-center gap-2.5 px-6 py-5"
       >
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-sm">
           <BriefcaseIcon />
         </div>
         <span className="text-base font-bold text-gray-800 tracking-tight">TrackJobs</span>
-      </div>
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-2 space-y-0.5">
@@ -59,7 +54,7 @@ export default function Sidebar() {
           </div>
         )}
         <button
-          onClick={handleSignOut}
+          onClick={logout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-all duration-150"
         >
           <SignOutIcon />
