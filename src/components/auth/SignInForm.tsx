@@ -64,14 +64,9 @@ export default function SignInForm({ onSwitch }: Props) {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label={t('dashboard.aria.togglePassword')}
           >
             <EyeIcon open={showPassword} />
-          </button>
-        </div>
-
-        <div className="flex justify-end">
-          <button type="button" className="text-xs text-blue-600 hover:text-blue-700 hover:underline transition-colors">
-            {t('auth.signIn.forgotPassword')}
           </button>
         </div>
 

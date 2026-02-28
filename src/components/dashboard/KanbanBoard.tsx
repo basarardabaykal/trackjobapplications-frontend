@@ -27,6 +27,7 @@ interface CardProps {
 }
 
 function KanbanCard({ app, onView, onEdit, onDelete, onDragStart, onDragEnd, isDragging }: CardProps) {
+  const { t } = useTranslation()
   return (
     <div
       draggable
@@ -52,12 +53,14 @@ function KanbanCard({ app, onView, onEdit, onDelete, onDragStart, onDragEnd, isD
           <button
             onClick={e => { e.stopPropagation(); onEdit(app) }}
             className="p-1 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            aria-label={t('dashboard.aria.edit')}
           >
             <EditIcon />
           </button>
           <button
             onClick={e => { e.stopPropagation(); onDelete(app) }}
             className="p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+            aria-label={t('dashboard.aria.delete')}
           >
             <TrashIcon />
           </button>

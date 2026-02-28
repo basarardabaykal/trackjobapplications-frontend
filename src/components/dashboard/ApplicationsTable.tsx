@@ -82,12 +82,14 @@ export default function ApplicationsTable({ applications, onView, onEdit, onDele
                   <button
                     onClick={e => { e.stopPropagation(); onEdit(app) }}
                     className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-100 transition-colors"
+                    aria-label={t('dashboard.aria.edit')}
                   >
                     <EditIcon />
                   </button>
                   <button
                     onClick={e => { e.stopPropagation(); onDelete(app) }}
                     className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    aria-label={t('dashboard.aria.delete')}
                   >
                     <TrashIcon />
                   </button>
